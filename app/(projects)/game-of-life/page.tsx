@@ -1,7 +1,12 @@
+'use client'
+
+import GameOfLife from './game-of-life'
+
 const GameOfLifePage = () => {
   return (
-    <div>
-      <h1>Game of Life</h1>
+    <div className="flex items-center">
+      <h1 className="md:max-w-screen-xl">Game of Life</h1>
+      <GameOfLife />
     </div>
   )
 }
