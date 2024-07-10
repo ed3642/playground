@@ -13,7 +13,7 @@ import {
 
 export const NavBar = () => {
   return (
-    <div className="sticky top-0 w-full h-14 px-4 border-b shadow-sm flex items-center z-50">
+    <div className="sticky top-0 w-full h-14 border-b shadow-sm flex items-center z-50 bg-slate-900">
       <div className="md:max-w-screen-xl mx-auto flex items-center w-full justify-between">
         <Logo />
         <NavigationMenu>
