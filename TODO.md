@@ -5,3 +5,7 @@
 [ ] make game of life somehow
 [ ] shared checkboxs game
 [ ] Djikstras
+
+[ ] Make website more like a portfolio
+[ ] graph animation on back of homeback
+[ ] inspiration from https://demo.reactresume.com/

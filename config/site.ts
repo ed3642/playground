@@ -3,8 +3,8 @@ export const siteConfig = {
   description: 'Learning some Next.js 🚀',
   icons: [
     {
-      url: '/barrel.svg',
-      href: '/barrel.svg',
+      url: '/logo1.png',
+      href: '/logo1.png',
     },
   ],
 }
