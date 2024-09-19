@@ -17,7 +17,7 @@ const LandingPage = () => {
         className={cn('flex flex-col items-center justify-center space-y-6')}
       >
         <div className="text-3xl md:text-6xl bg-gradient-to-r from-purple-600 to-blue-700 text-white px-4 p-2 rounded-md pb-4 w-fit">
-          🚀 Learing Next.js 🚀
+          🚀 Building Stuff For Fun 🚀
         </div>
       </div>
 
@@ -27,12 +27,32 @@ const LandingPage = () => {
         )}
       >
         <p className="text-xl text-muted-foreground">
-          This is just a place where I try to make some fun projects with
-          Next.js.
+          This is just a place where I try to make some small fun projects. See
+          what I&apos;ve made so far with navigation on the top.
         </p>
         <p className="text-xl text-muted-foreground">
-          Checkout what I&apos;ve made so far with navigation on the top.
+          Or checkout some samples of my professional work below.
         </p>
+      </div>
+
+      <div
+        className={cn('flex flex-col items-center justify-center space-y-6')}
+      >
+        <h2 className="text-2xl md:text-5xl text-center mb-6">
+          Professional Work
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* Add your project cards here */}
+          <div className="bg-white p-4 rounded-lg shadow-md">
+            <h3 className="text-xl font-bold">Project 1</h3>
+            <p className="text-muted-foreground">Description of project 1.</p>
+          </div>
+          <div className="bg-white p-4 rounded-lg shadow-md">
+            <h3 className="text-xl font-bold">Project 2</h3>
+            <p className="text-muted-foreground">Description of project 2.</p>
+          </div>
+          {/* Add more projects as needed */}
+        </div>
       </div>
 
       <div

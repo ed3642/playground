@@ -1,10 +1,11 @@
 [x] finish setting up the basics
 [x] remove unnecessary starting code
 [x] add navbar
-[ ] Fix global extra attributes warning
+[x] Fix global extra attributes warning
 [ ] make game of life somehow
+[ ] add step slider to GoL
 [ ] shared checkboxs game
-[ ] Djikstras
+[ ] Djikstras showcase
 
 [ ] Make website more like a portfolio
 [ ] graph animation on back of homeback

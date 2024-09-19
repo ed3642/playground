@@ -14,19 +14,11 @@ const GameOfLife = () => {
 
   const [grid, setGrid] = useState(initialGrid)
 
-  useEffect(() => {
-    setGrid(grid)
-  }, [grid])
-
-  const toggleCell = (rowIndex: number, colIndex: number) => {
+  const toggleCell = (i: number, j: number) => {
     setGrid((grid) =>
       grid.map((row, row_i) =>
         row.map((cell, cell_i) =>
-          row_i === rowIndex && cell_i === colIndex
-            ? cell === 0
-              ? 1
-              : 0
-            : cell
+          row_i === i && cell_i === j ? (cell === 0 ? 1 : 0) : cell
         )
       )
     )
