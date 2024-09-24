@@ -27,8 +27,8 @@ const LandingPage = () => {
         )}
       >
         <p className="text-xl text-muted-foreground">
-          This is just a place where I try to make some small fun projects. See
-          what I&apos;ve made so far with navigation on the top.
+          This is just a place to showcase my skills. See what I&apos;ve made so
+          far with navigation on the top.
         </p>
         <p className="text-xl text-muted-foreground">
           Or checkout some samples of my professional work below.
@@ -58,7 +58,7 @@ const LandingPage = () => {
       <div
         className={cn('flex flex-col items-center justify-center space-y-6')}
       >
-        <h2 className="text-2xl md:text-5xl text-center mb-6">Follow me</h2>
+        <h2 className="text-2xl md:text-5xl text-center mb-6">My Links</h2>
         <div className="flex items-center space-x-4">
           <a
             href="https://www.linkedin.com/in/eduardo-san-martin-celi/"

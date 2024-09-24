@@ -3,7 +3,6 @@
 [x] add navbar
 [x] Fix global extra attributes warning
 [ ] make game of life somehow
-[ ] add step slider to GoL
 [ ] shared checkboxs game
 [ ] Djikstras showcase
 

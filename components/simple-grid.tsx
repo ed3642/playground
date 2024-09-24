@@ -1,16 +1,17 @@
 interface SimpleGridProps {
   grid: number[][]
   toggleCell: (rowIndex: number, colIndex: number) => void
+  cellSize: number
 }
 
-const SimpleGrid = ({ grid, toggleCell }: SimpleGridProps) => {
+const SimpleGrid = ({ grid, toggleCell, cellSize }: SimpleGridProps) => {
   return (
     <div className="flex justify-center items-center flex-col">
       <div className="flex w-full overflow-hidden justify-center items-center">
         <div
           style={{
             display: 'grid',
-            gridTemplateColumns: `repeat(${grid[0].length}, 20px)`,
+            gridTemplateColumns: `repeat(${grid[0].length}, ${cellSize}px)`,
             gap: '2px',
           }}
         >
@@ -20,8 +21,8 @@ const SimpleGrid = ({ grid, toggleCell }: SimpleGridProps) => {
                 <div
                   key={colIndex}
                   style={{
-                    width: '20px',
-                    height: '20px',
+                    width: `${cellSize}px`,
+                    height: `${cellSize}px`,
                     backgroundColor: cell ? '#3545b3' : '#ccc',
                     cursor: 'pointer',
                   }}
