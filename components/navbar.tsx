@@ -11,10 +11,10 @@ import {
   navigationMenuTriggerStyle,
 } from '@/components/ui/navigation-menu'
 
-export const NavBar = () => {
+export const NavBar: React.FC = () => {
   return (
     <div className="sticky top-0 w-full h-14 border-b shadow-sm flex items-center z-50 bg-slate-900">
-      <div className="md:max-w-screen-xl mx-auto flex items-center w-full justify-between">
+      <div className="md:max-w-screen-xl md:mx-auto mx-2 flex items-center w-full justify-between">
         <Logo />
         <NavigationMenu>
           <NavigationMenuList>
@@ -38,3 +38,5 @@ export const NavBar = () => {
     </div>
   )
 }
+
+export default NavBar

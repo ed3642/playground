@@ -10,13 +10,11 @@ const LandingPage = () => {
         'flex flex-col items-center justify-center space-y-10 pt-16'
       )}
     >
-      <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">
+      <h1 className="scroll-m-20 text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight">
         Hi, I&apos;m ed3642dev
       </h1>
-      <div
-        className={cn('flex flex-col items-center justify-center space-y-6')}
-      >
-        <div className="text-3xl md:text-6xl bg-gradient-to-r from-purple-600 to-blue-700 text-white px-4 p-2 rounded-md pb-4 w-fit">
+      <div className="flex flex-col items-center justify-center space-y-4 sm:space-y-6">
+        <div className="text-2xl sm:text-3xl md:text-4xl lg:text-6xl bg-gradient-to-r from-purple-600 to-blue-700 text-white px-2 sm:px-4 p-1 sm:p-2 rounded-md pb-2 sm:pb-4 w-fit">
           🚀 Building Stuff For Fun 🚀
         </div>
       </div>
@@ -38,7 +36,7 @@ const LandingPage = () => {
       <div
         className={cn('flex flex-col items-center justify-center space-y-6')}
       >
-        <h2 className="text-2xl md:text-5xl text-center mb-6">
+        <h2 className="md:text-5xl text-2xl text-center mb-6">
           Professional Work
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -56,9 +54,11 @@ const LandingPage = () => {
       </div>
 
       <div
-        className={cn('flex flex-col items-center justify-center space-y-6')}
+        className={cn(
+          'flex flex-col items-center justify-center space-y-6 pb-12'
+        )}
       >
-        <h2 className="text-2xl md:text-5xl text-center mb-6">My Links</h2>
+        <h2 className="md:text-5xl text-2xl text-center mb-5">My Links</h2>
         <div className="flex items-center space-x-4">
           <a
             href="https://www.linkedin.com/in/eduardo-san-martin-celi/"

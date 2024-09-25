@@ -4,7 +4,11 @@ interface SimpleGridProps {
   cellSize: number
 }
 
-const SimpleGrid = ({ grid, toggleCell, cellSize }: SimpleGridProps) => {
+const SimpleGrid: React.FC<SimpleGridProps> = ({
+  grid,
+  toggleCell,
+  cellSize,
+}) => {
   return (
     <div className="flex justify-center items-center flex-col">
       <div className="flex w-full overflow-hidden justify-center items-center">
