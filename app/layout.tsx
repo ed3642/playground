@@ -3,7 +3,8 @@ import { Roboto } from 'next/font/google'
 
 import { siteConfig } from '@/config/site'
 import { ThemeProvider } from '@/components/theme-provider'
-import { NavBar } from '@/components/navbar'
+import NavBar from '@/components/navbar'
+import Footer from '@/components/footer'
 
 import './globals.css'
 
@@ -37,6 +38,7 @@ export default function RootLayout({
         >
           <NavBar />
           {children}
+          <Footer />
         </ThemeProvider>
       </body>
     </html>
