@@ -2,30 +2,56 @@ import SimpleGrid from '@/components/simple-grid'
 import { Button } from '@/components/ui/button'
 import { useEffect, useState } from 'react'
 
-const NUM_ROWS = 25
-const NUM_COLS = 75
-const cellSize = 15
-const tickTime = 250 // ms
+const NUM_ROWS: number = 25
+const tickTime: number = 250 // ms
+const gapSize: number = 2
 
-const initialGrid: number[][] = (() => {
+// TODO: instead of calculating the cellSize based on wanting 80 cells, make it choose how many cells based on a cellsize of 15
+
+const calculateGridDimensions = () => {
+  const viewportWidth: number = window.innerWidth
+  const totalGapSize: number = gapSize * (80 - 1) // Total gap size for 80 cells
+  const availableWidth: number = viewportWidth - totalGapSize
+  const cellSize: number = Math.floor(availableWidth / 80)
+  const NUM_COLS: number = Math.floor(availableWidth / cellSize)
+  return { NUM_COLS, cellSize }
+}
+
+const initialGrid = (NUM_COLS: number): number[][] => {
   const grid = new Array(NUM_ROWS)
   for (let i = 0; i < NUM_ROWS; i++) {
     grid[i] = new Array(NUM_COLS).fill(0)
   }
   // interesting init pattern
-  grid[10][33] = 1
-  grid[11][33] = 1
-  grid[12][33] = 1
-  grid[12][34] = 1
-  grid[11][32] = 1
+  grid[10][Math.floor(NUM_COLS / 3)] = 1
+  grid[11][Math.floor(NUM_COLS / 3)] = 1
+  grid[12][Math.floor(NUM_COLS / 3)] = 1
+  grid[12][Math.floor(NUM_COLS / 3) + 1] = 1
+  grid[11][Math.floor(NUM_COLS / 3) - 1] = 1
 
   return grid
-})()
+}
 
-const GameOfLife = () => {
-  const [grid, setGrid] = useState(initialGrid)
+const GameOfLife: React.FC = () => {
+  const [{ NUM_COLS, cellSize }, setGridDimensions] = useState(
+    calculateGridDimensions
+  )
+  const [grid, setGrid] = useState(initialGrid(NUM_COLS))
   const [intervalId, setIntervalId] = useState<NodeJS.Timeout | null>(null)
   const [isRunning, setIsRunning] = useState(false)
+
+  useEffect(() => {
+    const handleResize = () => {
+      const { NUM_COLS, cellSize } = calculateGridDimensions()
+      setGridDimensions({ NUM_COLS, cellSize })
+      setGrid(initialGrid(NUM_COLS))
+    }
+
+    window.addEventListener('resize', handleResize)
+    return () => {
+      window.removeEventListener('resize', handleResize)
+    }
+  }, [])
 
   const isInBounds = (i: number, j: number): boolean => {
     return i >= 0 && i < NUM_ROWS && j >= 0 && j < NUM_COLS
@@ -89,7 +115,7 @@ const GameOfLife = () => {
   }
 
   const handleReset = (): void => {
-    setGrid(initialGrid)
+    setGrid(initialGrid(NUM_COLS))
     handleStop()
   }
 
@@ -138,7 +164,12 @@ const GameOfLife = () => {
         </Button>
       </div>
       <div className="mb-4">
-        <SimpleGrid grid={grid} toggleCell={toggleCell} cellSize={cellSize} />
+        <SimpleGrid
+          grid={grid}
+          toggleCell={toggleCell}
+          cellSize={cellSize}
+          gap={gapSize}
+        />
       </div>
     </div>
   )

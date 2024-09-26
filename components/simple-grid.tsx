@@ -2,12 +2,14 @@ interface SimpleGridProps {
   grid: number[][]
   toggleCell: (rowIndex: number, colIndex: number) => void
   cellSize: number
+  gap: number
 }
 
 const SimpleGrid: React.FC<SimpleGridProps> = ({
   grid,
   toggleCell,
   cellSize,
+  gap,
 }) => {
   return (
     <div className="flex justify-center items-center flex-col">
@@ -16,7 +18,7 @@ const SimpleGrid: React.FC<SimpleGridProps> = ({
           style={{
             display: 'grid',
             gridTemplateColumns: `repeat(${grid[0].length}, ${cellSize}px)`,
-            gap: '2px',
+            gap: `${gap}px`,
           }}
         >
           {grid.map((row, rowIndex) => (
