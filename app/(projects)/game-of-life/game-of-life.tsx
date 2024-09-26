@@ -1,3 +1,5 @@
+'use client'
+
 import SimpleGrid from '@/components/simple-grid'
 import { Button } from '@/components/ui/button'
 import { useEffect, useState } from 'react'

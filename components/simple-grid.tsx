@@ -5,12 +5,7 @@ interface SimpleGridProps {
   gap: number
 }
 
-const SimpleGrid: React.FC<SimpleGridProps> = ({
-  grid,
-  toggleCell,
-  cellSize,
-  gap,
-}) => {
+const SimpleGrid: React.FC<SimpleGridProps> = ({ grid, toggleCell, cellSize, gap }) => {
   return (
     <div className="flex justify-center items-center flex-col">
       <div className="flex w-full overflow-hidden justify-center items-center">
