@@ -5,16 +5,14 @@ import { useEffect, useState } from 'react'
 const NUM_ROWS: number = 25
 const tickTime: number = 250 // ms
 const gapSize: number = 2
-
-// TODO: instead of calculating the cellSize based on wanting 80 cells, make it choose how many cells based on a cellsize of 15
+const CELL_SIZE: number = 15
 
 const calculateGridDimensions = () => {
   const viewportWidth: number = window.innerWidth
-  const totalGapSize: number = gapSize * (80 - 1) // Total gap size for 80 cells
+  const totalGapSize: number = gapSize * (Math.floor(viewportWidth / CELL_SIZE) - 1)
   const availableWidth: number = viewportWidth - totalGapSize
-  const cellSize: number = Math.floor(availableWidth / 80)
-  const NUM_COLS: number = Math.floor(availableWidth / cellSize)
-  return { NUM_COLS, cellSize }
+  const NUM_COLS: number = Math.floor(availableWidth / CELL_SIZE)
+  return { NUM_COLS, cellSize: CELL_SIZE }
 }
 
 const initialGrid = (NUM_COLS: number): number[][] => {
@@ -33,9 +31,8 @@ const initialGrid = (NUM_COLS: number): number[][] => {
 }
 
 const GameOfLife: React.FC = () => {
-  const [{ NUM_COLS, cellSize }, setGridDimensions] = useState(
-    calculateGridDimensions
-  )
+  // TODO: figure out how to not use calculateGridDimensions on the server
+  const [{ NUM_COLS, cellSize }, setGridDimensions] = useState(calculateGridDimensions)
   const [grid, setGrid] = useState(initialGrid(NUM_COLS))
   const [intervalId, setIntervalId] = useState<NodeJS.Timeout | null>(null)
   const [isRunning, setIsRunning] = useState(false)
@@ -107,9 +104,7 @@ const GameOfLife: React.FC = () => {
     }
     setGrid((grid) =>
       grid.map((row, row_i) =>
-        row.map((cell, cell_i) =>
-          row_i === i && cell_i === j ? (cell === 0 ? 1 : 0) : cell
-        )
+        row.map((cell, cell_i) => (row_i === i && cell_i === j ? (cell === 0 ? 1 : 0) : cell))
       )
     )
   }
@@ -152,11 +147,7 @@ const GameOfLife: React.FC = () => {
         <Button onClick={handleRun} disabled={isRunning}>
           Run
         </Button>
-        <Button
-          variant="destructive"
-          onClick={handleStop}
-          disabled={!isRunning}
-        >
+        <Button variant="destructive" onClick={handleStop} disabled={!isRunning}>
           Stop
         </Button>
         <Button onClick={handleReset} variant="destructive">
@@ -164,12 +155,7 @@ const GameOfLife: React.FC = () => {
         </Button>
       </div>
       <div className="mb-4">
-        <SimpleGrid
-          grid={grid}
-          toggleCell={toggleCell}
-          cellSize={cellSize}
-          gap={gapSize}
-        />
+        <SimpleGrid grid={grid} toggleCell={toggleCell} cellSize={cellSize} gap={gapSize} />
       </div>
     </div>
   )
