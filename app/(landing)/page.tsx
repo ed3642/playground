@@ -2,6 +2,7 @@ import Image from 'next/image'
 import { GraduationCap, Languages, MapPin, Trophy } from 'lucide-react'
 
 import { cn } from '@/lib/utils'
+import { Badge } from '@/components/ui/badge'
 
 const LandingPage = () => {
   return (
@@ -70,36 +71,36 @@ const LandingPage = () => {
               looking to learn new things and build interesting things.
               Currently I&apos;m trying to get more involved in the Nextjs and
               C# web dev communities. I would also like to build an interesting
-              company in my youth.
+              company in my youth and work with talented developers.
             </p>
           </div>
         </div>
 
         <div className="flex flex-wrap justify-center gap-4 mt-4">
-          <div className="bg-gray-200 text-gray-800 px-4 py-2 rounded-full flex items-center">
+          <Badge className="text-sm">
             <MapPin className="h-5 w-5 text-gray-800 mr-2" />
             ON, Canada
-          </div>
-          <div className="bg-gray-200 text-gray-800 px-4 py-2 rounded-full flex items-center">
+          </Badge>
+          <Badge className="text-sm">
             <Trophy className="h-5 w-5 text-gray-800 mr-2" />
             Top 20% In Leetcode
-          </div>
-          <div className="bg-gray-200 text-gray-800 px-4 py-2 rounded-full flex items-center">
+          </Badge>
+          <Badge className="text-sm">
             <GraduationCap className="h-5 w-5 text-gray-800 mr-2" />
             BS from Ontario Tech
-          </div>
-          <div className="bg-gray-200 text-gray-800 px-4 py-2 rounded-full flex items-center">
+          </Badge>
+          <Badge className="text-sm">
             <GraduationCap className="h-5 w-5 text-gray-800 mr-2" />
             CPA from Durham College
-          </div>
-          <div className="bg-gray-200 text-gray-800 px-4 py-2 rounded-full flex items-center">
+          </Badge>
+          <Badge className="text-sm">
             <Languages className="h-5 w-5 text-gray-800 mr-2" />
             Native Spanish
-          </div>
-          <div className="bg-gray-200 text-gray-800 px-4 py-2 rounded-full flex items-center">
+          </Badge>
+          <Badge className="text-sm">
             <Trophy className="h-5 w-5 text-gray-800 mr-2" />
             D1 In League
-          </div>
+          </Badge>
         </div>
       </div>
     </div>
