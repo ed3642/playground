@@ -33,23 +33,18 @@ const initialGrid = (NUM_COLS: number): number[][] => {
 }
 
 const GameOfLife: React.FC = () => {
-  // TODO: figure out how to not use calculateGridDimensions on the server
+  // TODO: useReducer
+  // TODO: add controls for speed
+  // TODO: dont handle resize
   const [{ NUM_COLS, cellSize }, setGridDimensions] = useState(calculateGridDimensions)
   const [grid, setGrid] = useState(initialGrid(NUM_COLS))
   const [intervalId, setIntervalId] = useState<NodeJS.Timeout | null>(null)
   const [isRunning, setIsRunning] = useState(false)
 
   useEffect(() => {
-    const handleResize = () => {
-      const { NUM_COLS, cellSize } = calculateGridDimensions()
-      setGridDimensions({ NUM_COLS, cellSize })
-      setGrid(initialGrid(NUM_COLS))
-    }
-
-    window.addEventListener('resize', handleResize)
-    return () => {
-      window.removeEventListener('resize', handleResize)
-    }
+    const { NUM_COLS, cellSize } = calculateGridDimensions()
+    setGridDimensions({ NUM_COLS, cellSize })
+    setGrid(initialGrid(NUM_COLS))
   }, [])
 
   const isInBounds = (i: number, j: number): boolean => {
@@ -102,7 +97,7 @@ const GameOfLife: React.FC = () => {
 
   const toggleCell = (i: number, j: number): void => {
     if (isRunning) {
-      return
+      handleStop()
     }
     setGrid((grid) =>
       grid.map((row, row_i) =>
