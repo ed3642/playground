@@ -10,6 +10,7 @@ import {
   NavigationMenuList,
   navigationMenuTriggerStyle,
 } from '@/components/ui/navigation-menu'
+import { HomeIcon } from 'lucide-react'
 
 export const NavBar: React.FC = () => {
   return (
@@ -28,7 +29,7 @@ export const NavBar: React.FC = () => {
             <NavigationMenuItem>
               <Link href="/" legacyBehavior passHref>
                 <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                  Other
+                  <HomeIcon size={24} />
                 </NavigationMenuLink>
               </Link>
             </NavigationMenuItem>

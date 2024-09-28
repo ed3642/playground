@@ -3,7 +3,30 @@ import { GraduationCap, Languages, MapPin, Trophy } from 'lucide-react'
 
 import { cn } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
-import { Card } from '@/components/ui/card'
+import WorkCard from './_components/work-card'
+
+const myWork = [
+  {
+    title: 'Title 1',
+    description: 'Description 1',
+    image_path: '/logo1.png',
+  },
+  {
+    title: 'Title 2',
+    description: 'Description 2',
+    image_path: '/logo1.png',
+  },
+  {
+    title: 'Title 3',
+    description: 'Description 3',
+    image_path: '/logo1.png',
+  },
+  {
+    title: 'Title 4',
+    description: 'Description 4',
+    image_path: '/logo1.png',
+  },
+]
 
 const LandingPage = () => {
   return (
@@ -33,8 +56,15 @@ const LandingPage = () => {
 
       <div className={cn('flex flex-col items-center justify-center space-y-6')}>
         <h2 className="md:text-5xl text-3xl text-center mb-6">Professional Work</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <Card>test</Card>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {myWork.map((work) => (
+            <WorkCard
+              key={work.title}
+              title={work.title}
+              description={work.description}
+              image_path={work.image_path}
+            />
+          ))}
         </div>
       </div>
 
