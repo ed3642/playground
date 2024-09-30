@@ -7,24 +7,28 @@ import WorkCard from './_components/work-card'
 
 const myWork = [
   {
-    title: 'Title 1',
-    description: 'Description 1',
-    image_path: '/logo1.png',
+    title: 'MiningMatch',
+    description:
+      'This was my first entrepreneurial project, I was the sole programmer and had one business partner. Like LinkedIn but exclusively for Mining Professionals. Designed and implemented all of the features.',
+    image_path: '/media/miningmatch-sc.jpeg',
+    link: 'https://www.miningmatch.net/',
   },
   {
-    title: 'Title 2',
-    description: 'Description 2',
-    image_path: '/logo1.png',
+    title: 'AssistList',
+    description:
+      'I worked one of my summers for this NFP, revamped their homepage in collaboration with designers and improved some internal tools.',
+    image_path: '/media/assistlist-sc.jpeg',
+    link: 'https://www.assistlist.ca/',
   },
   {
-    title: 'Title 3',
-    description: 'Description 3',
-    image_path: '/logo1.png',
+    title: 'Repurpost',
+    description: 'I made API prototypes for this online marketing startup when i was a student.',
+    image_path: '/media/repurpost-logo.jpg',
   },
   {
-    title: 'Title 4',
-    description: 'Description 4',
-    image_path: '/logo1.png',
+    title: 'GBA',
+    description: 'I made internal tool prototypes for this social media startup.',
+    image_path: '/media/gba-logo.png',
   },
 ]
 
@@ -63,6 +67,7 @@ const LandingPage = () => {
               title={work.title}
               description={work.description}
               image_path={work.image_path}
+              link={work.link}
             />
           ))}
         </div>
@@ -72,7 +77,7 @@ const LandingPage = () => {
         <h2 className="md:text-5xl text-3xl text-center mb-6">More About Me</h2>
         <div className="flex flex-col md:flex-row items-center justify-center space-y-6 md:space-y-0 md:space-x-6 mx-4">
           <div className="w-full md:w-1/3 flex justify-center">
-            <Image src="/duck.jpg" width={200} height={200} alt="My Profile Pic" />
+            <Image src="/media/duck.jpg" width={200} height={200} alt="My Profile Pic" />
           </div>
           <div className="w-full md:w-2/3">
             <p className="text-lg text-muted-foreground">
