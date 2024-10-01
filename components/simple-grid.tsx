@@ -1,3 +1,5 @@
+import React from 'react'
+
 interface SimpleGridProps {
   grid: number[][]
   toggleCell: (rowIndex: number, colIndex: number) => void
@@ -16,18 +18,18 @@ const SimpleGrid: React.FC<SimpleGridProps> = ({ grid, toggleCell, cellSize, gap
             gap: `${gap}px`,
           }}
         >
-          {grid.map((row, rowIndex) => (
-            <div key={rowIndex} style={{ display: 'contents' }}>
-              {row.map((cell, colIndex) => (
+          {grid.map((row: number[], i: number) => (
+            <div key={i} style={{ display: 'contents' }}>
+              {row.map((isAlive: number, j: number) => (
                 <div
-                  key={colIndex}
+                  key={j}
                   style={{
                     width: `${cellSize}px`,
                     height: `${cellSize}px`,
-                    backgroundColor: cell ? '#3545b3' : '#ccc',
+                    backgroundColor: isAlive ? '#3545b3' : '#ccc',
                     cursor: 'pointer',
                   }}
-                  onClick={() => toggleCell(rowIndex, colIndex)}
+                  onClick={() => toggleCell(i, j)}
                 />
               ))}
             </div>

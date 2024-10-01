@@ -2,7 +2,7 @@
 
 import SimpleGrid from '@/components/simple-grid'
 import { Button } from '@/components/ui/button'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
 const NUM_ROWS: number = 25
 const tickTime: number = 250 // ms
@@ -35,16 +35,16 @@ const initialGrid = (NUM_COLS: number): number[][] => {
 const GameOfLife: React.FC = () => {
   // TODO: useReducer
   // TODO: add controls for speed
-  // TODO: dont handle resize
   const [{ NUM_COLS, cellSize }, setGridDimensions] = useState(calculateGridDimensions)
-  const [grid, setGrid] = useState(initialGrid(NUM_COLS))
+  const initialGridMemo = useMemo(() => initialGrid(NUM_COLS), [NUM_COLS])
+  const [grid, setGrid] = useState(initialGridMemo)
   const [intervalId, setIntervalId] = useState<NodeJS.Timeout | null>(null)
   const [isRunning, setIsRunning] = useState(false)
 
   useEffect(() => {
     const { NUM_COLS, cellSize } = calculateGridDimensions()
     setGridDimensions({ NUM_COLS, cellSize })
-    setGrid(initialGrid(NUM_COLS))
+    setGrid(initialGridMemo)
   }, [])
 
   const isInBounds = (i: number, j: number): boolean => {
@@ -107,7 +107,7 @@ const GameOfLife: React.FC = () => {
   }
 
   const handleReset = (): void => {
-    setGrid(initialGrid(NUM_COLS))
+    setGrid(initialGridMemo)
     handleStop()
   }
 

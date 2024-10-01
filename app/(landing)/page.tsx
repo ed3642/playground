@@ -48,13 +48,12 @@ const LandingPage = () => {
         </div>
       </div>
 
-      <div className={cn('flex flex-col items-center justify-center space-y-6 mx-4')}>
+      <div className={cn('flex flex-col space-y-6 mx-4')}>
         <p className="text-xl text-muted-foreground">
-          This is just a place to showcase my skills. See what I&apos;ve made so far with navigation
-          on the top.
-        </p>
-        <p className="text-xl text-muted-foreground">
-          Or checkout some samples of my professional work below.
+          I&apos;m a full-stack JavaScript developer.
+          <br />
+          Check out the neat little projects I&apos;ve with the navigation above, or see my
+          professional work below.
         </p>
       </div>
 

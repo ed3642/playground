@@ -32,8 +32,8 @@ export default function RootLayout({
       <body className={`${roboto.className} flex flex-col min-h-screen`}>
         <ThemeProvider
           attribute="class"
-          defaultTheme="system"
-          enableSystem
+          defaultTheme="dark"
+          enableSystem={false}
           disableTransitionOnChange
         >
           <NavBar />

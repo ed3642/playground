@@ -16,7 +16,7 @@ const WorkCard: React.FC<WorkCardProps> = ({
 }) => {
   const cardContent = (
     <Card
-      className="relative h-96 w-64 bg-cover bg-top"
+      className="relative h-96 w-72 bg-cover bg-top"
       style={{ backgroundImage: `url(${image_path})` }}
     >
       <div className="absolute inset-0 flex flex-col justify-end">

@@ -5,9 +5,10 @@
 [x] make game of life somehow
 [x] fix GoL for mobile
 [x] wrap up GoL
-[ ] Make website more like a portfolio
+[x] Make website more like a portfolio
+[ ] add ts eslint
 [ ] graph animation on back of homeback
-[ ] inspiration from https://demo.reactresume.com/
+[ ] visitor tracking
 
 [ ] Djikstras showcase
 [ ] shared checkboxs game
