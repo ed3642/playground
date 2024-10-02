@@ -7,7 +7,9 @@
 [x] wrap up GoL
 [x] Make website more like a portfolio
 [x] visitor tracking (GA)
-[ ] graph animation on back of homeback
+[x] graph animation on back of homeback
+[x] add a divisor to landing
+[ ] add interactivity to down arrow in landing page
 
 [ ] Djikstras showcase
 [ ] shared checkboxs game

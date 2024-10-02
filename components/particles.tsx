@@ -6,6 +6,7 @@ import { initializeParticleEngine } from '@/lib/particle-engine-singleton'
 
 const ParticlesComponent: React.FC = () => {
   const [init, setInit] = useState(false)
+  const [backgroundColor, setBackgroundColor] = useState('')
 
   useEffect(() => {
     initParticlesEngine(async (engine) => {
@@ -13,6 +14,10 @@ const ParticlesComponent: React.FC = () => {
     }).then(() => {
       setInit(true)
     })
+
+    // set background color
+    const bgColor = getComputedStyle(document.body).getPropertyValue('--background').trim()
+    setBackgroundColor(bgColor)
   }, [])
 
   return (
@@ -23,16 +28,12 @@ const ParticlesComponent: React.FC = () => {
           options={{
             background: {
               color: {
-                value: '#0d47a1',
+                value: backgroundColor,
               },
             },
             fpsLimit: 75,
             interactivity: {
               events: {
-                onClick: {
-                  enable: true,
-                  mode: 'push',
-                },
                 onHover: {
                   enable: true,
                   mode: 'repulse',
@@ -46,18 +47,18 @@ const ParticlesComponent: React.FC = () => {
                   quantity: 4,
                 },
                 repulse: {
-                  distance: 200,
+                  distance: 125,
                   duration: 0.4,
                 },
               },
             },
             particles: {
               color: {
-                value: '#ffffff',
+                value: '#ced7e3',
               },
               links: {
-                color: '#ffffff',
-                distance: 150,
+                color: '#1f2937',
+                distance: 250,
                 enable: true,
                 opacity: 0.5,
                 width: 1,
@@ -69,16 +70,16 @@ const ParticlesComponent: React.FC = () => {
                   default: 'bounce',
                 },
                 random: false,
-                speed: 6,
+                speed: 2,
                 straight: false,
               },
               number: {
                 density: {
                   enable: true,
-                  height: 800,
-                  width: 800,
+                  height: 1200,
+                  width: 1200,
                 },
-                value: 80,
+                value: 50,
               },
               opacity: {
                 value: 0.5,
@@ -87,7 +88,7 @@ const ParticlesComponent: React.FC = () => {
                 type: 'circle',
               },
               size: {
-                value: { min: 1, max: 5 },
+                value: { min: 1, max: 4 },
               },
             },
             detectRetina: true,
