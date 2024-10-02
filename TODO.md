@@ -6,9 +6,8 @@
 [x] fix GoL for mobile
 [x] wrap up GoL
 [x] Make website more like a portfolio
-[ ] add ts eslint
+[x] visitor tracking (GA)
 [ ] graph animation on back of homeback
-[ ] visitor tracking
 
 [ ] Djikstras showcase
 [ ] shared checkboxs game

@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { Roboto } from 'next/font/google'
+import GoogleAnalytics from '@/components/google-analytics'
 
 import { siteConfig } from '@/config/site'
 import { ThemeProvider } from '@/components/theme-provider'
@@ -30,6 +31,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${roboto.className} flex flex-col min-h-screen`}>
+        <GoogleAnalytics />
         <ThemeProvider
           attribute="class"
           defaultTheme="dark"

@@ -4,33 +4,9 @@ import { GraduationCap, Languages, MapPin, Trophy } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
 import WorkCard from './_components/work-card'
-
-const myWork = [
-  {
-    title: 'MiningMatch',
-    description:
-      'This was my first entrepreneurial project, I was the sole programmer and had one business partner. Like LinkedIn but exclusively for Mining Professionals. Designed and implemented all of the features.',
-    image_path: '/media/miningmatch-sc.jpeg',
-    link: 'https://www.miningmatch.net/',
-  },
-  {
-    title: 'AssistList',
-    description:
-      'I worked one of my summers for this NFP, revamped their homepage in collaboration with designers and improved some internal tools.',
-    image_path: '/media/assistlist-sc.jpeg',
-    link: 'https://www.assistlist.ca/',
-  },
-  {
-    title: 'Repurpost',
-    description: 'I made API prototypes for this online marketing startup when i was a student.',
-    image_path: '/media/repurpost-logo.jpg',
-  },
-  {
-    title: 'GBA',
-    description: 'I made internal tool prototypes for this social media startup.',
-    image_path: '/media/gba-logo.png',
-  },
-]
+import ParticlesComponent from '@/components/particles'
+import SocialIcons from '@/components/social-icons'
+import { myWork } from '@/lib/constants'
 
 const LandingPage = () => {
   return (
@@ -39,22 +15,27 @@ const LandingPage = () => {
         'md:max-w-screen-xl md:mx-auto mx-2 flex flex-col items-center justify-center space-y-10 pt-16'
       )}
     >
-      <h1 className="scroll-m-20 text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight">
-        Hi, I&apos;m ed3642dev
-      </h1>
-      <div className="flex flex-col items-center justify-center space-y-4 sm:space-y-6">
-        <div className="text-2xl sm:text-3xl md:text-4xl lg:text-6xl bg-gradient-to-r from-purple-600 to-blue-700 text-white px-2 sm:px-4 p-1 sm:p-2 rounded-md pb-2 sm:pb-4 w-fit">
-          🚀 Building Stuff For Fun 🚀
+      {/* <ParticlesComponent /> */}
+      <div className="min-h-[70vh] w-full flex flex-col items-center justify-center relative">
+        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight my-4">
+          Hi, I&apos;m ed3642dev
+        </h1>
+        <div className="space-y-4 sm:space-y-6 my-4">
+          <div className="text-2xl sm:text-3xl md:text-4xl lg:text-6xl bg-gradient-to-r from-purple-600 to-blue-700 text-white px-2 sm:px-4 p-1 sm:p-2 rounded-md pb-2 sm:pb-4 w-fit">
+            🚀 Building Stuff For Fun 🚀
+          </div>
         </div>
-      </div>
-
-      <div className={cn('flex flex-col space-y-6 mx-4')}>
-        <p className="text-xl text-muted-foreground">
-          I&apos;m a full-stack JavaScript developer.
-          <br />
-          Check out the neat little projects I&apos;ve with the navigation above, or see my
-          professional work below.
-        </p>
+        <div className={cn('space-y-6 mx-4 my-4 text-center')}>
+          <p className="text-xl text-muted-foreground">
+            I&apos;m a full-stack JavaScript developer.
+            <br />
+            Check out the neat little projects I&apos;ve with the navigation above, or see my
+            professional work below.
+          </p>
+        </div>
+        <div className="my-4">
+          <SocialIcons iconSize={36} />
+        </div>
       </div>
 
       <div className={cn('flex flex-col items-center justify-center space-y-6')}>
