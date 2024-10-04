@@ -9,6 +9,8 @@
 [x] visitor tracking (GA)
 [x] graph animation on back of homeback
 [x] add a divisor to landing
+[x] add resume
+[x] add technical skill sets
 [ ] add interactivity to down arrow in landing page
 
 [ ] Djikstras showcase
