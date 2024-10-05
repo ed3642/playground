@@ -1,21 +1,22 @@
+import React from 'react'
 import Image from 'next/image'
-import { ChevronDown, FileText, GraduationCap, Languages, Link, MapPin, Trophy } from 'lucide-react'
+import { FileText, GraduationCap, Languages, MapPin, Trophy } from 'lucide-react'
 
 import WorkCard from './_components/work-card'
 import ParticlesComponent from '@/components/particles'
 import SocialIcons from '@/components/social-icons'
 import { myWork, skills } from '@/lib/constants'
-import { Separator } from '@/components/ui/separator'
 import AchievementBadge from './_components/achievement-badge'
 import { Button } from '@/components/ui/button'
 import Section from './_components/section'
 import { Badge } from '@/components/ui/badge'
+import ScrollToSection from './_components/scroll-to-section'
 
 const LandingPage = () => {
   return (
     <>
       <ParticlesComponent />
-      <div className="md:max-w-screen-xl px-4 md:mx-auto flex flex-col items-center justify-center space-y-10  relative z-10">
+      <div className="md:max-w-screen-xl px-4 md:mx-auto flex flex-col items-center justify-center space-y-10 first:mt-0 relative z-10">
         <div className="h-[95vh] w-full flex flex-col items-center justify-center space-y-6">
           <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight">
             Hi, I&apos;m ed3642dev
@@ -44,12 +45,7 @@ const LandingPage = () => {
           <div>
             <SocialIcons iconSize={36} />
           </div>
-
-          <div className="w-full pt-16">
-            <Separator
-              icon={<ChevronDown className="h-8 w-8 text-gray-800 bg-white rounded-full p-1" />}
-            />
-          </div>
+          <ScrollToSection />
         </div>
 
         <Section title="Professional Work">

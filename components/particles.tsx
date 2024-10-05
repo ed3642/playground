@@ -1,23 +1,32 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import Particles, { initParticlesEngine } from '@tsparticles/react'
-import { initializeParticleEngine } from '@/lib/particle-engine-singleton'
+import { initializeParticleEngineSingleton, isInitialized } from '@/lib/particle-engine-singleton'
 
 const ParticlesComponent: React.FC = () => {
-  const [init, setInit] = useState(false)
+  const [init, setInit] = useState(isInitialized)
   const [backgroundColor, setBackgroundColor] = useState('')
+  const hasInitializedRef = useRef(false) // need this to prevent useEffect from running multiple times
 
   useEffect(() => {
-    initParticlesEngine(async (engine) => {
-      await initializeParticleEngine(engine)
-    }).then(() => {
-      setInit(true)
-    })
+    const initializeParticles = async () => {
+      await initParticlesEngine((engine) => initializeParticleEngineSingleton(engine))
+      setInit(isInitialized)
+    }
 
-    // set background color
-    const bgColor = getComputedStyle(document.body).getPropertyValue('--background').trim()
-    setBackgroundColor(bgColor)
+    if (!hasInitializedRef.current) {
+      if (!isInitialized) {
+        initializeParticles()
+      } else {
+        setInit(true)
+      }
+      // Set background color
+      const bgColor = getComputedStyle(document.body).getPropertyValue('--background').trim()
+      setBackgroundColor(bgColor)
+
+      hasInitializedRef.current = true
+    }
   }, [])
 
   return (

@@ -11,7 +11,7 @@
 [x] add a divisor to landing
 [x] add resume
 [x] add technical skill sets
-[ ] add interactivity to down arrow in landing page
+[x] add interactivity to down arrow in landing page
 
 [ ] Djikstras showcase
 [ ] shared checkboxs game
