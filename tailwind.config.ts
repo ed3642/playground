@@ -85,11 +85,24 @@ const config = {
           from: { height: 'var(--radix-accordion-content-height)' },
           to: { height: '0' },
         },
+        enter: {
+          from: {
+            opacity: 'var(--tw-enter-opacity, 0)',
+            transform:
+              'scale(var(--tw-enter-scale, 0.95)) rotate(var(--tw-enter-rotate, 0deg)) translateX(var(--tw-enter-translate-x, 0)) translateY(var(--tw-enter-translate-y, 0))',
+          },
+          to: {
+            opacity: '1',
+            transform: 'scale(1) rotate(0deg) translateX(0) translateY(0)',
+          },
+        },
       },
       animation: {
         ...bounceAnimations,
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
+        in: 'enter 500ms ease-out',
+        'in-long': 'enter 5000ms ease-out',
       },
     },
   },
