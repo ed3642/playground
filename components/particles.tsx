@@ -27,7 +27,7 @@ const ParticlesComponent: React.FC = () => {
   }, [])
 
   const particlesLoaded = async (container?: Container): Promise<void> => {
-    console.log(container)
+    return
   }
 
   const options: ISourceOptions = useMemo(

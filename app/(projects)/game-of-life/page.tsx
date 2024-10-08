@@ -1,16 +1,21 @@
-'use client'
-
 import dynamic from 'next/dynamic'
+import { Suspense } from 'react'
+import GameOfLifeLoading from './loading'
 
 // no ssr for game of life component
-const GameOfLife = dynamic(() => import('./game-of-life'), { ssr: false })
+const GameOfLife = dynamic(() => import('./game-of-life'), {
+  ssr: false,
+  loading: () => <GameOfLifeLoading />, // Use the loading component
+})
 
-const GameOfLifePage = () => {
+const GameOfLifePage: React.FC = () => {
   return (
     <div className="flex flex-col items-center w-full">
       <h1 className="md:max-w-screen-xl mx-auto text-5xl mt-5">Game of Life</h1>
       <div className="flex items-center justify-center w-full">
-        <GameOfLife />
+        <Suspense fallback={<GameOfLifeLoading />}>
+          <GameOfLife />
+        </Suspense>
       </div>
       <div className="mx-2">
         <p>

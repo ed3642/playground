@@ -14,4 +14,6 @@
 [x] add interactivity to down arrow in landing page
 
 [ ] Djikstras showcase
+[ ] type speed tracker based on 1984
+[ ] recursion showcase
 [ ] shared checkboxs game

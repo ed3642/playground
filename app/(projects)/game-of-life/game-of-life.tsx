@@ -35,6 +35,7 @@ const initialGrid = (NUM_COLS: number): number[][] => {
 const GameOfLife: React.FC = () => {
   // TODO: useReducer
   // TODO: add controls for speed
+  // TODO: maybe use a web worker for the updateGrid function
   const [{ NUM_COLS, cellSize }, setGridDimensions] = useState(calculateGridDimensions)
   const initialGridMemo = useMemo(() => initialGrid(NUM_COLS), [NUM_COLS])
   const [grid, setGrid] = useState(initialGridMemo)
@@ -45,7 +46,7 @@ const GameOfLife: React.FC = () => {
     const { NUM_COLS, cellSize } = calculateGridDimensions()
     setGridDimensions({ NUM_COLS, cellSize })
     setGrid(initialGridMemo)
-  }, [])
+  }, [initialGridMemo])
 
   const isInBounds = (i: number, j: number): boolean => {
     return i >= 0 && i < NUM_ROWS && j >= 0 && j < NUM_COLS
