@@ -5,7 +5,7 @@ import GameOfLifeLoading from './loading'
 // no ssr for game of life component
 const GameOfLife = dynamic(() => import('./game-of-life'), {
   ssr: false,
-  loading: () => <GameOfLifeLoading />, // Use the loading component
+  loading: () => <GameOfLifeLoading />,
 })
 
 const GameOfLifePage: React.FC = () => {
