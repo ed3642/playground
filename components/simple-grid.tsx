@@ -5,9 +5,10 @@ interface SimpleGridProps {
   toggleCell: (rowIndex: number, colIndex: number) => void
   cellSize: number
   gap: number
+  colors: { [key: number]: string }
 }
 
-const SimpleGrid: React.FC<SimpleGridProps> = ({ grid, toggleCell, cellSize, gap }) => {
+const SimpleGrid: React.FC<SimpleGridProps> = ({ grid, toggleCell, cellSize, gap, colors }) => {
   return (
     <div className="flex justify-center items-center flex-col">
       <div className="flex w-full overflow-hidden justify-center items-center">
@@ -20,13 +21,13 @@ const SimpleGrid: React.FC<SimpleGridProps> = ({ grid, toggleCell, cellSize, gap
         >
           {grid.map((row: number[], i: number) => (
             <div key={i} style={{ display: 'contents' }}>
-              {row.map((isAlive: number, j: number) => (
+              {row.map((value: number, j: number) => (
                 <div
                   key={j}
                   style={{
                     width: `${cellSize}px`,
                     height: `${cellSize}px`,
-                    backgroundColor: isAlive ? '#3545b3' : '#ccc',
+                    backgroundColor: colors[value] || colors[0], // default to first color
                     cursor: 'pointer',
                   }}
                   onClick={() => toggleCell(i, j)}

@@ -14,6 +14,9 @@
 [x] add interactivity to down arrow in landing page
 
 [ ] Djikstras showcase
+[ ] make simpleGrid look nicer
+[ ] make the grids save the last state
 [ ] type speed tracker based on 1984
 [ ] recursion showcase
 [ ] shared checkboxs game
+[ ] chat

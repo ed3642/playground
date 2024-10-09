@@ -3,72 +3,66 @@
 import SimpleGrid from '@/components/simple-grid'
 import { Button } from '@/components/ui/button'
 import { useEffect, useMemo, useState } from 'react'
-import { calculateGridDimensions } from '@/lib/simple-grid/utils'
+import { calculateGridDimensions, getCellSize, isInBounds } from '@/lib/simple-grid/utils'
 
-const NUM_ROWS: number = 25
+const MIN_ROWS = 13
+const GAP_SIZE: number = 2
 const tickTime: number = 250 // ms
-const gapSize: number = 2
-
-const getCellSize = (): number => {
-  const viewportWidth: number = window.innerWidth
-  return viewportWidth < 768 ? 30 : 15 // use bigger cells on phone
+const colorMapping: { [key: number]: string } = {
+  0: '#ccc', // dead
+  1: '#3545b3', // alive
 }
+const directions = [
+  [0, 1],
+  [1, 0],
+  [0, -1],
+  [-1, 0],
+  [1, 1],
+  [1, -1],
+  [-1, 1],
+  [-1, -1],
+]
 
-const initialGrid = (NUM_COLS: number): number[][] => {
-  const grid = new Array(NUM_ROWS)
-  for (let i = 0; i < NUM_ROWS; i++) {
-    grid[i] = new Array(NUM_COLS).fill(0)
+const initialGrid = (numRows: number, numCols: number): number[][] => {
+  const grid = new Array(numRows)
+  for (let i = 0; i < numRows; i++) {
+    grid[i] = new Array(numCols).fill(0)
   }
   // interesting init pattern
-  grid[10][Math.floor(NUM_COLS / 3)] = 1
-  grid[11][Math.floor(NUM_COLS / 3)] = 1
-  grid[12][Math.floor(NUM_COLS / 3)] = 1
-  grid[12][Math.floor(NUM_COLS / 3) + 1] = 1
-  grid[11][Math.floor(NUM_COLS / 3) - 1] = 1
+  const thridCol = Math.floor(numCols / 3)
+  grid[10][thridCol] = 1
+  grid[11][thridCol] = 1
+  grid[12][thridCol] = 1
+  grid[12][thridCol + 1] = 1
+  grid[11][thridCol - 1] = 1
 
   return grid
 }
 
+const DESIRED_VIEW_WIDTH = window.innerWidth
+const DESIREF_VIEW_HEIGHT = window.innerHeight * 0.7
+
 const GameOfLife: React.FC = () => {
-  const [cellSize, setCellSize] = useState(getCellSize)
-  const [{ numCols }, setGridDimensions] = useState(() =>
-    calculateGridDimensions(cellSize, gapSize)
+  const cellSize = getCellSize(20, 30)
+  const { numCols, numRows } = calculateGridDimensions(
+    cellSize,
+    GAP_SIZE,
+    DESIRED_VIEW_WIDTH,
+    DESIREF_VIEW_HEIGHT,
+    MIN_ROWS
   )
-  const initialGridMemo = useMemo(() => initialGrid(numCols), [numCols])
+  const initialGridMemo = useMemo(() => initialGrid(numRows, numCols), [numRows, numCols])
   const [grid, setGrid] = useState(initialGridMemo)
   const [intervalId, setIntervalId] = useState<NodeJS.Timeout | null>(null)
   const [isRunning, setIsRunning] = useState(false)
 
-  useEffect(() => {
-    const newCellSize = getCellSize()
-    setCellSize(newCellSize)
-    const { numCols } = calculateGridDimensions(newCellSize, gapSize)
-    setGridDimensions({ numCols, cellSize: newCellSize })
-    setGrid(initialGrid(numCols))
-  }, [])
-
-  const isInBounds = (i: number, j: number): boolean => {
-    return i >= 0 && i < NUM_ROWS && j >= 0 && j < numCols
-  }
-
   const getLiveNeighbors = (grid: number[][], x: number, y: number): number => {
-    const directions = [
-      [0, 1],
-      [1, 0],
-      [0, -1],
-      [-1, 0],
-      [1, 1],
-      [1, -1],
-      [-1, 1],
-      [-1, -1],
-    ]
-
     let count = 0
     for (const [dx, dy] of directions) {
       const nX = x + dx
       const nY = y + dy
-      if (isInBounds(nX, nY)) {
-        count += grid[nX][nY]
+      if (isInBounds(nX, nY, numRows, numCols) && grid[nX][nY] === 1) {
+        count += 1
       }
     }
     return count
@@ -77,7 +71,7 @@ const GameOfLife: React.FC = () => {
   const updateGrid = (): void => {
     setGrid((grid) => {
       const newGrid = grid.map((row) => [...row]) // need to create a new grid so react picks up on the changes
-      for (let i = 0; i < NUM_ROWS; i++) {
+      for (let i = 0; i < numRows; i++) {
         for (let j = 0; j < numCols; j++) {
           const neighborCount = getLiveNeighbors(grid, i, j)
           if (grid[i][j] === 1) {
@@ -99,11 +93,10 @@ const GameOfLife: React.FC = () => {
     if (isRunning) {
       handleStop()
     }
-    setGrid((grid) =>
-      grid.map((row, row_i) =>
-        row.map((cell, cell_i) => (row_i === i && cell_i === j ? (cell === 0 ? 1 : 0) : cell))
-      )
-    )
+    if (!isInBounds(i, j, numRows, numCols)) return
+    const newGrid = grid.map((row) => [...row]) // need to create a new grid so react picks up on the changes
+    newGrid[i][j] = newGrid[i][j] === 0 ? 1 : 0
+    setGrid(newGrid)
   }
 
   const handleReset = (): void => {
@@ -152,7 +145,13 @@ const GameOfLife: React.FC = () => {
         </Button>
       </div>
       <div className="mb-4">
-        <SimpleGrid grid={grid} toggleCell={toggleCell} cellSize={cellSize} gap={gapSize} />
+        <SimpleGrid
+          grid={grid}
+          toggleCell={toggleCell}
+          cellSize={cellSize}
+          gap={GAP_SIZE}
+          colors={colorMapping}
+        />
       </div>
     </div>
   )
