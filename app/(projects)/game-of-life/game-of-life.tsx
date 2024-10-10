@@ -6,7 +6,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { calculateGridDimensions, getCellSize, isInBounds } from '@/lib/simple-grid/utils'
 
 const MIN_ROWS = 13
-const GAP_SIZE: number = 2
+const GAP_SIZE: number = 1
 const tickTime: number = 250 // ms
 const colorMapping: { [key: number]: string } = {
   0: '#ccc', // dead
@@ -46,7 +46,6 @@ const GameOfLife: React.FC = () => {
   const cellSize = getCellSize(20, 30)
   const { numCols, numRows } = calculateGridDimensions(
     cellSize,
-    GAP_SIZE,
     DESIRED_VIEW_WIDTH,
     DESIREF_VIEW_HEIGHT,
     MIN_ROWS

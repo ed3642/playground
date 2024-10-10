@@ -1,17 +1,11 @@
 export const calculateGridDimensions = (
   cellSize: number,
-  gapSize: number,
   viewWidth: number,
   viewHeight: number,
   minNumRows: number = 10
 ): { numCols: number; numRows: number } => {
-  const totalGapSizeWidth: number = gapSize * (Math.floor(viewWidth / cellSize) - 1)
-  const availableWidth: number = viewWidth - totalGapSizeWidth
-  const numCols: number = Math.floor(availableWidth / cellSize) - 1
-
-  const totalGapSizeHeight: number = gapSize * (Math.floor(viewHeight / cellSize) - 1)
-  const availableHeight: number = viewHeight - totalGapSizeHeight
-  const numRows: number = Math.max(Math.floor(availableHeight / cellSize), minNumRows)
+  const numCols: number = Math.floor(viewWidth / cellSize) - 1
+  const numRows: number = Math.max(Math.floor(viewHeight / cellSize), minNumRows)
 
   return { numCols, numRows }
 }

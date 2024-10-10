@@ -12,7 +12,9 @@ import { ChevronDown } from 'lucide-react'
 import { useState } from 'react'
 import { calculateGridDimensions, getCellSize, isInBounds } from '@/lib/simple-grid/utils'
 
-const GAP_SIZE: number = 2
+import { runBFS, runAStar, runDjikstras, runSPFA } from './algorithms'
+
+const GAP_SIZE: number = 1
 enum COLORS {
   empty = 0,
   source = 1,
@@ -24,11 +26,11 @@ enum COLORS {
 
 const colorMapping = {
   [COLORS.empty]: '#ccc', // Light gray
-  [COLORS.source]: '#ff4500', // OrangeRed
+  [COLORS.source]: '#ffd700', // Gold
   [COLORS.dest]: '#ffd700', // Gold
-  [COLORS.wall]: '#8a2be2', // BlueViolet
-  [COLORS.explored]: '#708090', // SlateGray
-  [COLORS.path]: '#32cd32', // LimeGreen
+  [COLORS.wall]: 'transparent',
+  [COLORS.explored]: '#708090', // dark grey
+  [COLORS.path]: '#32cd32', // green
 }
 
 enum Algorithm {
@@ -36,6 +38,13 @@ enum Algorithm {
   Djikstras = 'Djikstras',
   SPFA = 'SPFA',
   AStar = 'A*',
+}
+
+const algorithmMap = {
+  [Algorithm.BFS]: runBFS,
+  [Algorithm.Djikstras]: runDjikstras,
+  [Algorithm.SPFA]: runSPFA,
+  [Algorithm.AStar]: runAStar,
 }
 
 const algorithms = Object.values(Algorithm)
@@ -64,12 +73,14 @@ const PathFinding: React.FC = () => {
   const cellSize = getCellSize(25, 35)
   const { numRows, numCols } = calculateGridDimensions(
     cellSize,
-    GAP_SIZE,
     DESIRED_VIEW_WIDTH,
     DESIRED_VIEW_HEIGHT
   )
   const [grid, setGrid] = useState(initialGrid(numRows, numCols))
   const [algorithm, setAlgorithm] = useState<Algorithm>(Algorithm.BFS)
+  const [draggedCell, setDraggedCell] = useState<{ type: COLORS; i: number; j: number } | null>(
+    null
+  )
 
   const toggleCell = (i: number, j: number): void => {
     if (
@@ -83,8 +94,32 @@ const PathFinding: React.FC = () => {
     setGrid(newGrid)
   }
 
+  const handleDragStart = (i: number, j: number) => {
+    if (grid[i][j] === COLORS.source || grid[i][j] === COLORS.dest) {
+      setDraggedCell({ type: grid[i][j], i, j })
+    }
+  }
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault()
+  }
+
+  const handleDrop = (i: number, j: number) => {
+    if (draggedCell && isInBounds(i, j, numRows, numCols)) {
+      const newGrid = grid.map((row) => [...row])
+      newGrid[draggedCell.i][draggedCell.j] = COLORS.empty
+      newGrid[i][j] = draggedCell.type
+      setGrid(newGrid)
+      setDraggedCell(null)
+    }
+  }
+
   const runCurrentAlgorithm = (): void => {
-    console.log('Running', algorithm)
+    const runAlgorithm = algorithmMap[algorithm]
+    if (runAlgorithm) {
+      const newGrid = runAlgorithm(grid, COLORS)
+      setGrid(newGrid)
+    }
   }
 
   return (
@@ -107,7 +142,7 @@ const PathFinding: React.FC = () => {
             </DropdownMenuContent>
           </DropdownMenu>
           <Button variant="destructive" onClick={() => setGrid(initialGrid(numRows, numCols))}>
-            Clear
+            Reset
           </Button>
         </div>
       </div>
@@ -118,6 +153,10 @@ const PathFinding: React.FC = () => {
           cellSize={cellSize}
           gap={GAP_SIZE}
           colors={colorMapping}
+          onDragStart={handleDragStart}
+          onDragOver={handleDragOver}
+          onDrop={handleDrop}
+          draggableValues={[COLORS.source, COLORS.dest]}
         />
       </div>
     </div>
@@ -125,3 +164,4 @@ const PathFinding: React.FC = () => {
 }
 
 export default PathFinding
+export { COLORS }

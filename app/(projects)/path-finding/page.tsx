@@ -21,6 +21,7 @@ const PathFindingPage: React.FC = () => {
           Some interesting single source shortest path algorithms. Click on the squares to place
           obstacles and see the pathfinding algorithms in action.
         </p>
+        <p>Note: no mobile support for this yet.</p>
       </div>
     </div>
   )
