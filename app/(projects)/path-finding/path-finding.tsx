@@ -1,5 +1,6 @@
 'use client'
 
+import { useState, useMemo } from 'react'
 import SimpleGrid from '@/components/simple-grid'
 import {
   DropdownMenu,
@@ -9,47 +10,46 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { Button } from '@/components/ui/button'
 import { ChevronDown } from 'lucide-react'
-import { useState } from 'react'
 import { calculateGridDimensions, getCellSize, isInBounds } from '@/lib/simple-grid/utils'
-
-import { runBFS, runAStar, runDjikstras, runSPFA } from './algorithms'
+import * as algorithms from './algorithms'
+import { Switch } from '@/components/ui/switch'
+import { Label } from '@/components/ui/label'
+import { colorMapping, COLORS } from './legend'
 
 const GAP_SIZE: number = 1
-enum COLORS {
-  empty = 0,
-  source = 1,
-  dest = 2,
-  wall = 3,
-  explored = 4,
-  path = 5,
-}
 
-const colorMapping = {
-  [COLORS.empty]: '#ccc', // Light gray
-  [COLORS.source]: '#ffd700', // Gold
-  [COLORS.dest]: '#ffd700', // Gold
-  [COLORS.wall]: 'transparent',
-  [COLORS.explored]: '#708090', // dark grey
-  [COLORS.path]: '#32cd32', // green
-}
+const baseDirections = [
+  [0, 1],
+  [1, 0],
+  [0, -1],
+  [-1, 0],
+]
+const diagonalDirections = [
+  [0, 1],
+  [1, 0],
+  [0, -1],
+  [-1, 0],
+  [1, 1],
+  [1, -1],
+  [-1, 1],
+  [-1, -1],
+]
 
 enum Algorithm {
   BFS = 'BFS',
-  Djikstras = 'Djikstras',
-  SPFA = 'SPFA',
+  DFS = 'DFS',
   AStar = 'A*',
 }
 
-const algorithmMap = {
-  [Algorithm.BFS]: runBFS,
-  [Algorithm.Djikstras]: runDjikstras,
-  [Algorithm.SPFA]: runSPFA,
-  [Algorithm.AStar]: runAStar,
+const algorithmFuncMap = {
+  [Algorithm.BFS]: algorithms.runBFS,
+  [Algorithm.DFS]: algorithms.runDFS,
+  [Algorithm.AStar]: algorithms.runAStar,
 }
 
-const algorithms = Object.values(Algorithm)
+const algorithmNames = Object.values(Algorithm)
 
-const initialGrid = (numRows: number, numCols: number): number[][] => {
+const createInitialGrid = (numRows: number, numCols: number): number[][] => {
   const grid = new Array(numRows)
   for (let i = 0; i < numRows; i++) {
     grid[i] = new Array(numCols).fill(COLORS.empty)
@@ -62,8 +62,7 @@ const initialGrid = (numRows: number, numCols: number): number[][] => {
   grid[9][halfCol] = COLORS.wall
   grid[10][halfCol] = COLORS.wall
   grid[9][halfCol + colShift] = COLORS.dest
-
-  return grid
+  return algorithms.runBFS({ grid, colors: COLORS, directions: baseDirections })
 }
 
 const DESIRED_VIEW_WIDTH = window.innerWidth
@@ -76,8 +75,11 @@ const PathFinding: React.FC = () => {
     DESIRED_VIEW_WIDTH,
     DESIRED_VIEW_HEIGHT
   )
-  const [grid, setGrid] = useState(initialGrid(numRows, numCols))
+
+  const initialGrid = useMemo(() => createInitialGrid(numRows, numCols), [numRows, numCols])
+  const [grid, setGrid] = useState(initialGrid)
   const [algorithm, setAlgorithm] = useState<Algorithm>(Algorithm.BFS)
+  const [allowDiagonals, setAllowDiagonals] = useState(false)
   const [draggedCell, setDraggedCell] = useState<{ type: COLORS; i: number; j: number } | null>(
     null
   )
@@ -89,9 +91,8 @@ const PathFinding: React.FC = () => {
       grid[i][j] == COLORS.dest
     )
       return
-    const newGrid = grid.map((row) => [...row])
-    newGrid[i][j] = newGrid[i][j] === COLORS.wall ? COLORS.empty : COLORS.wall
-    setGrid(newGrid)
+    grid[i][j] = grid[i][j] === COLORS.wall ? COLORS.empty : COLORS.wall
+    runCurrentAlgorithm()
   }
 
   const handleDragStart = (i: number, j: number) => {
@@ -100,51 +101,83 @@ const PathFinding: React.FC = () => {
     }
   }
 
-  const handleDragOver = (e: React.DragEvent) => {
-    e.preventDefault()
-  }
-
   const handleDrop = (i: number, j: number) => {
+    if (grid[i][j] === COLORS.dest || grid[i][j] === COLORS.source) return
     if (draggedCell && isInBounds(i, j, numRows, numCols)) {
-      const newGrid = grid.map((row) => [...row])
-      newGrid[draggedCell.i][draggedCell.j] = COLORS.empty
-      newGrid[i][j] = draggedCell.type
-      setGrid(newGrid)
+      grid[draggedCell.i][draggedCell.j] = COLORS.empty
+      grid[i][j] = draggedCell.type
+      runCurrentAlgorithm()
       setDraggedCell(null)
     }
   }
 
   const runCurrentAlgorithm = (): void => {
-    const runAlgorithm = algorithmMap[algorithm]
+    const runAlgorithm = algorithmFuncMap[algorithm]
     if (runAlgorithm) {
-      const newGrid = runAlgorithm(grid, COLORS)
-      setGrid(newGrid)
+      setGrid(
+        runAlgorithm({
+          grid,
+          colors: COLORS,
+          directions: allowDiagonals ? diagonalDirections : baseDirections,
+        })
+      )
+    }
+  }
+
+  const handleReset = (): void => {
+    setGrid(createInitialGrid(numRows, numCols))
+    setAllowDiagonals(false)
+  }
+
+  const handleToggleDiagonals = () => {
+    setAllowDiagonals((prev) => {
+      const newAllowDiagonals = !prev
+      runCurrentAlgorithmWithDiagonals(newAllowDiagonals)
+      return newAllowDiagonals
+    })
+  }
+
+  const runCurrentAlgorithmWithDiagonals = (newAllowDiagonals: boolean) => {
+    const runAlgorithm = algorithmFuncMap[algorithm]
+    if (runAlgorithm) {
+      setGrid(
+        runAlgorithm({
+          grid,
+          colors: COLORS,
+          directions: newAllowDiagonals ? diagonalDirections : baseDirections,
+        })
+      )
     }
   }
 
   return (
     <div className="flex items-center flex-col">
-      <div className="flex items-center my-2 space-x-2">
-        <div className="space-x-2">
-          <Button onClick={runCurrentAlgorithm}>Find path</Button>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="secondary">
-                Algo: {algorithm} <ChevronDown className="ml-2" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent>
-              {algorithms.map((algo) => (
-                <DropdownMenuItem key={algo} onSelect={() => setAlgorithm(algo)}>
-                  {algo}
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
-          <Button variant="destructive" onClick={() => setGrid(initialGrid(numRows, numCols))}>
-            Reset
-          </Button>
+      <div className="flex flex-col items-center my-2 space-y-2 sm:flex-row sm:space-x-2 sm:space-y-0">
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="secondary">
+              Algo: {algorithm} <ChevronDown className="ml-2" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent>
+            {algorithmNames.map((algo) => (
+              <DropdownMenuItem key={algo} onSelect={() => setAlgorithm(algo)}>
+                {algo}
+              </DropdownMenuItem>
+            ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
+        <div className="flex items-center space-x-2">
+          <Switch
+            id="allow-diagonals-switch"
+            checked={allowDiagonals}
+            onClick={handleToggleDiagonals}
+          />
+          <Label htmlFor="allow-diagonals-switch">Allow Diagonals</Label>
         </div>
+        <Button variant="destructive" onClick={handleReset}>
+          Reset
+        </Button>
       </div>
       <div className="mb-4">
         <SimpleGrid
@@ -154,9 +187,12 @@ const PathFinding: React.FC = () => {
           gap={GAP_SIZE}
           colors={colorMapping}
           onDragStart={handleDragStart}
-          onDragOver={handleDragOver}
+          onDragOver={(e) => {
+            e.preventDefault()
+          }}
           onDrop={handleDrop}
           draggableValues={[COLORS.source, COLORS.dest]}
+          cellClassName="rounded-full"
         />
       </div>
     </div>
@@ -164,4 +200,3 @@ const PathFinding: React.FC = () => {
 }
 
 export default PathFinding
-export { COLORS }

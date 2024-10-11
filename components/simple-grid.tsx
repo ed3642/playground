@@ -1,3 +1,4 @@
+import { cn } from '@/lib/utils'
 import React from 'react'
 
 interface SimpleGridProps {
@@ -10,6 +11,7 @@ interface SimpleGridProps {
   onDragStart?: (rowIndex: number, colIndex: number) => void
   onDragOver?: (e: React.DragEvent) => void
   onDrop?: (rowIndex: number, colIndex: number) => void
+  cellClassName?: string
 }
 
 const SimpleGrid: React.FC<SimpleGridProps> = ({
@@ -22,12 +24,13 @@ const SimpleGrid: React.FC<SimpleGridProps> = ({
   onDragStart,
   onDragOver,
   onDrop,
+  cellClassName,
 }) => {
   const gridTemplateColumns = `repeat(${grid[0].length}, ${cellSize}px)`
   const gridTemplateRows = `repeat(${grid.length}, ${cellSize}px)`
 
   return (
-    <div className="flex justify-center items-center flex-col">
+    <div className="flex justify-center items-center flex-col bg-slate-800">
       <div className="flex w-full overflow-hidden justify-center items-center">
         <div
           className="grid"
@@ -54,7 +57,7 @@ const SimpleGrid: React.FC<SimpleGridProps> = ({
                   onDrop={onDrop ? () => onDrop(i, j) : undefined}
                 >
                   <div
-                    className="w-full h-full flex justify-center items-center"
+                    className={cn('w-full h-full flex justify-center items-center', cellClassName)}
                     style={{
                       backgroundColor: colors[value] || colors[0], // default to first color
                     }}

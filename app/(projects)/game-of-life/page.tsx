@@ -20,7 +20,7 @@ const GameOfLifePage: React.FC = () => {
       <div className="mx-2">
         <p>
           This is a simple implementation of Conway&apos;s game of life. Click on the squares and
-          see what happens after you click start.
+          see what happens after you click run.
         </p>
         <p>The purpose of this was to test out state handling in Nextjs.</p>
         <p>

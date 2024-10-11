@@ -12,10 +12,13 @@
 [x] add resume
 [x] add technical skill sets
 [x] add interactivity to down arrow in landing page
-
-[ ] Djikstras showcase
 [x] make simpleGrid look nicer
-[ ] add onMouseDown to simpleGrid
+[x] add algo explanation to path finder
+[ ] get all the other algos working
+
+[ ] add mobile support to path finder
+[ ] add preset maps to path finder
+[ ] djikstras showcase
 [ ] type speed tracker based on 1984
 [ ] recursion showcase
 [ ] shared checkboxs game

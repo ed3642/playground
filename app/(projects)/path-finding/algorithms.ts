@@ -1,24 +1,25 @@
 import { isInBounds } from '@/lib/simple-grid/utils'
 import { Queue } from 'typescript-collections'
-import { COLORS } from './path-finding'
+import { COLORS } from './legend'
 
-const directions = [
-  [0, 1],
-  [0, -1],
-  [1, 0],
-  [-1, 0],
-]
+interface IPathFindingAlgorithmProps {
+  grid: number[][]
+  colors: typeof COLORS
+  directions: number[][]
+}
 
-export const runBFS = (grid: number[][], colors: typeof COLORS): number[][] => {
-  const newGrid = grid.map((row) => [...row])
+interface IPathFindingAlgorithm {
+  (props: IPathFindingAlgorithmProps): number[][]
+}
 
+export const runBFS: IPathFindingAlgorithm = ({ grid, colors, directions }) => {
   // locate source and destination
-  const [source, dest] = locateSourceAndDest(newGrid, colors)
-  clearPathRun(newGrid, colors)
+  const [source, dest] = locateSourceAndDest(grid, colors)
+  clearPathRun(grid, colors)
 
   if (source.length === 0 || dest.length === 0) {
     // didn't find the needed nodes
-    return newGrid
+    return grid
   }
 
   const queue = new Queue<number[]>() // [i, j]
@@ -29,41 +30,65 @@ export const runBFS = (grid: number[][], colors: typeof COLORS): number[][] => {
   while (!queue.isEmpty()) {
     const [i, j] = queue.dequeue() as number[]
 
-    for (const [dx, dy] of directions) {
-      const nX = i + dx
-      const nY = j + dy
-      if (isInBounds(nX, nY, grid.length, grid[0].length)) {
-        if (newGrid[nX][nY] === colors.empty) {
-          newGrid[nX][nY] = colors.explored
-          queue.enqueue([nX, nY])
-          parents[coordsToKey(nX, nY)] = [i, j]
-        } else if (newGrid[nX][nY] === colors.dest) {
+    for (const [di, dj] of directions) {
+      const nI = i + di
+      const nJ = j + dj
+      if (isInBounds(nI, nJ, grid.length, grid[0].length)) {
+        if (grid[nI][nJ] === colors.empty) {
+          grid[nI][nJ] = colors.explored
+          queue.enqueue([nI, nJ])
+          parents[coordsToKey(nI, nJ)] = [i, j]
+        } else if (grid[nI][nJ] === colors.dest) {
           // backtrack to find the shortest path
-          parents[coordsToKey(nX, nY)] = [i, j]
-          return backtrackPath(newGrid, parents, source, dest)
+          parents[coordsToKey(nI, nJ)] = [i, j]
+          return backtrackPath(grid, parents, source, dest)
         }
       }
     }
   }
-  return newGrid
+  return grid
 }
 
-export const runDjikstras = (grid: number[][]): number[][] => {
-  const newGrid = grid.map((row) => [...row])
-  // Implement Dijkstra's algorithm logic here
-  return newGrid
+export const runDFS: IPathFindingAlgorithm = ({ grid, colors, directions }) => {
+  // TODO: fix this
+  return grid
+  const [source, dest] = locateSourceAndDest(grid, colors)
+  clearPathRun(grid, colors)
+
+  if (source.length === 0 || dest.length === 0) {
+    return grid
+  }
+
+  const parents: { [key: string]: number[] } = {}
+
+  const dfs = (i: number, j: number): boolean => {
+    if (grid[i][j] === colors.dest) return true
+
+    grid[i][j] = colors.explored
+
+    for (const [dI, dJ] of directions) {
+      const nI = i + dI
+      const nJ = j + dJ
+      if (isInBounds(nI, nJ, grid.length, grid[0].length) && grid[nI][nJ] === colors.empty) {
+        const found = dfs(nI, nJ)
+        if (found) {
+          parents[coordsToKey(nI, nJ)] = [i, j]
+        }
+        return found
+      }
+    }
+    return false
+  }
+
+  if (dfs(source[0], source[1])) {
+    return backtrackPath(grid, parents, source, dest)
+  }
+  return grid
 }
 
-export const runSPFA = (grid: number[][]): number[][] => {
-  const newGrid = grid.map((row) => [...row])
-  // Implement SPFA algorithm logic here
-  return newGrid
-}
-
-export const runAStar = (grid: number[][]): number[][] => {
-  const newGrid = grid.map((row) => [...row])
+export const runAStar: IPathFindingAlgorithm = ({ grid, colors, directions }) => {
   // Implement A* algorithm logic here
-  return newGrid
+  return grid
 }
 
 const backtrackPath = (
@@ -75,7 +100,9 @@ const backtrackPath = (
   let curr = parents[coordsToKey(dest[0], dest[1])]
   while (curr[0] !== source[0] || curr[1] !== source[1]) {
     const [i, j] = curr
-    grid[i][j] = COLORS.path
+    if (grid[i][j] !== COLORS.source) {
+      grid[i][j] = COLORS.path
+    }
     curr = parents[coordsToKey(i, j)]
   }
   return grid
