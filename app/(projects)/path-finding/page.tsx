@@ -21,31 +21,34 @@ const PathFindingPage: React.FC = () => {
         </div>
       </div>
       <div className="container max-w-screen-xl">
-        <div className="flex space-x-6">
+        <div className="flex flex-col md:flex-row md:space-x-6 space-y-6 md:space-y-0">
           <Legend />
           <div className="flex-grow">
             <h2 className="text-xl mb-2">Algorithms</h2>
-            <p>
-              BFS (Breath First Search): Will get the shortest path but explores a lot of
-              unnecessary locations. Like exploring in each direction equally. Implemented with a
-              queue.
-            </p>
-            <p>
-              DFS (Depth First Search): Might not get the shortest path and might also explore a lot
-              more or a lot less unnecessary locations than BFS. Like picking a route and sticking
-              to it until it runs out. Implemented with recursion.
-            </p>
-            <p>
-              A* Search Algorithm: Will get the shortest path and with the right heuristic function
-              will explore minimal locations. Like exploring with a compass. Implemented with a
-              priority queue.
-            </p>
+            <ul className="list-disc pl-5">
+              <li>
+                <b>BFS (Breath First Search)</b>: Will get the shortest path but explores a lot of
+                unnecessary locations. Like exploring in each direction equally. Implemented with a
+                queue.
+              </li>
+              <li>
+                <b>DFS (Depth First Search)</b>: Might not get the shortest path and might also
+                explore a lot more or a lot less unnecessary locations than BFS. Like picking a
+                route and sticking to it until it runs out. Implemented with recursion.
+              </li>
+              <li>
+                <b>A* Search Algorithm</b>: Will get the shortest path and with the right heuristic
+                function will explore minimal locations. Like exploring with a compass. Implemented
+                with a priority queue.
+              </li>
+            </ul>
           </div>
         </div>
-        <Separator />
+        <Separator className="my-4" />
         <p>
-          Some interesting single source shortest path algorithms on a homogeneous distance grid.
-          Click on the cells to remove terrain and see the pathfinding algorithms in action.
+          These are some interesting single source shortest path algorithms on a homogeneous
+          distance grid. Click on the cells to remove terrain and see the pathfinding algorithms in
+          action.
         </p>
         <p>Note: no mobile support for this yet.</p>
       </div>

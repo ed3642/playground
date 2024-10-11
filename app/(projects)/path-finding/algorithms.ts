@@ -51,6 +51,7 @@ export const runBFS: IPathFindingAlgorithm = ({ grid, colors, directions }) => {
 
 export const runDFS: IPathFindingAlgorithm = ({ grid, colors, directions }) => {
   // TODO: fix this
+  console.log('DFS not implemented yet')
   return grid
   const [source, dest] = locateSourceAndDest(grid, colors)
   clearPathRun(grid, colors)

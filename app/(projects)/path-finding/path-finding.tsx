@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import SimpleGrid from '@/components/simple-grid'
 import {
   DropdownMenu,
@@ -9,12 +9,13 @@ import {
   DropdownMenuItem,
 } from '@/components/ui/dropdown-menu'
 import { Button } from '@/components/ui/button'
-import { ChevronDown } from 'lucide-react'
+import { ChevronDown, CircleHelp } from 'lucide-react'
 import { calculateGridDimensions, getCellSize, isInBounds } from '@/lib/simple-grid/utils'
 import * as algorithms from './algorithms'
 import { Switch } from '@/components/ui/switch'
 import { Label } from '@/components/ui/label'
 import { colorMapping, COLORS } from './legend'
+import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card'
 
 const GAP_SIZE: number = 1
 
@@ -84,6 +85,10 @@ const PathFinding: React.FC = () => {
     null
   )
 
+  useEffect(() => {
+    runCurrentAlgorithm(allowDiagonals)
+  }, [allowDiagonals, algorithm])
+
   const toggleCell = (i: number, j: number): void => {
     if (
       !isInBounds(i, j, numRows, numCols) ||
@@ -91,8 +96,9 @@ const PathFinding: React.FC = () => {
       grid[i][j] == COLORS.dest
     )
       return
+    // run this with the current grid so we dont have to make a copy just for updating one cell
     grid[i][j] = grid[i][j] === COLORS.wall ? COLORS.empty : COLORS.wall
-    runCurrentAlgorithm()
+    runCurrentAlgorithm(allowDiagonals)
   }
 
   const handleDragStart = (i: number, j: number) => {
@@ -106,48 +112,27 @@ const PathFinding: React.FC = () => {
     if (draggedCell && isInBounds(i, j, numRows, numCols)) {
       grid[draggedCell.i][draggedCell.j] = COLORS.empty
       grid[i][j] = draggedCell.type
-      runCurrentAlgorithm()
+      runCurrentAlgorithm(allowDiagonals)
       setDraggedCell(null)
     }
   }
 
-  const runCurrentAlgorithm = (): void => {
+  const runCurrentAlgorithm = (allowDiagonals: boolean): void => {
     const runAlgorithm = algorithmFuncMap[algorithm]
     if (runAlgorithm) {
-      setGrid(
-        runAlgorithm({
-          grid,
-          colors: COLORS,
-          directions: allowDiagonals ? diagonalDirections : baseDirections,
-        })
-      )
+      runAlgorithm({
+        grid,
+        colors: COLORS,
+        directions: allowDiagonals ? diagonalDirections : baseDirections,
+      })
+      const newGrid = grid.map((row) => [...row])
+      setGrid(newGrid)
     }
   }
 
   const handleReset = (): void => {
     setGrid(createInitialGrid(numRows, numCols))
     setAllowDiagonals(false)
-  }
-
-  const handleToggleDiagonals = () => {
-    setAllowDiagonals((prev) => {
-      const newAllowDiagonals = !prev
-      runCurrentAlgorithmWithDiagonals(newAllowDiagonals)
-      return newAllowDiagonals
-    })
-  }
-
-  const runCurrentAlgorithmWithDiagonals = (newAllowDiagonals: boolean) => {
-    const runAlgorithm = algorithmFuncMap[algorithm]
-    if (runAlgorithm) {
-      setGrid(
-        runAlgorithm({
-          grid,
-          colors: COLORS,
-          directions: newAllowDiagonals ? diagonalDirections : baseDirections,
-        })
-      )
-    }
   }
 
   return (
@@ -171,13 +156,23 @@ const PathFinding: React.FC = () => {
           <Switch
             id="allow-diagonals-switch"
             checked={allowDiagonals}
-            onClick={handleToggleDiagonals}
+            onClick={() => setAllowDiagonals(!allowDiagonals)}
           />
           <Label htmlFor="allow-diagonals-switch">Allow Diagonals</Label>
         </div>
         <Button variant="destructive" onClick={handleReset}>
           Reset
         </Button>
+        <HoverCard>
+          <HoverCardTrigger asChild>
+            <CircleHelp />
+          </HoverCardTrigger>
+          <HoverCardContent>
+            <p>
+              You can drag and drop the source and destination nodes. Also click to remove nodes.
+            </p>
+          </HoverCardContent>
+        </HoverCard>
       </div>
       <div className="mb-4">
         <SimpleGrid
