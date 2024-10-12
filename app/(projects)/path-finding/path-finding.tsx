@@ -86,6 +86,10 @@ const PathFinding: React.FC = () => {
     null
   )
 
+  useEffect(() => {
+    runCurrentAlgorithm(allowDiagonals)
+  }, [allowDiagonals, algorithm])
+
   const runCurrentAlgorithm = (allowDiagonals: boolean): void => {
     const runAlgorithm = algorithmFuncMap[algorithm]
     if (runAlgorithm) {
@@ -98,10 +102,6 @@ const PathFinding: React.FC = () => {
       setGrid(newGrid)
     }
   }
-
-  useEffect(() => {
-    runCurrentAlgorithm(allowDiagonals)
-  }, [allowDiagonals, algorithm, runCurrentAlgorithm])
 
   const toggleCell = (i: number, j: number): void => {
     if (

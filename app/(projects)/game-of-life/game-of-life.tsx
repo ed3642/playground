@@ -67,24 +67,28 @@ const GameOfLife: React.FC = () => {
     return count
   }
 
-  const updateGrid = (): void => {
-    setGrid((grid) => {
-      const newGrid = grid.map((row) => [...row]) // need to create a new grid so react picks up on the changes
-      for (let i = 0; i < numRows; i++) {
-        for (let j = 0; j < numCols; j++) {
-          const neighborCount = getLiveNeighbors(grid, i, j)
-          if (grid[i][j] === 1) {
-            if (neighborCount < 2 || neighborCount > 3) {
-              newGrid[i][j] = 0
-            }
-          } else {
-            if (neighborCount === 3) {
-              newGrid[i][j] = 1
-            }
+  const tickGrid = (grid: number[][]): number[][] => {
+    const newGrid = grid.map((row) => [...row])
+    for (let i = 0; i < numRows; i++) {
+      for (let j = 0; j < numCols; j++) {
+        const neighborCount = getLiveNeighbors(grid, i, j)
+        if (grid[i][j] === 1) {
+          if (neighborCount < 2 || neighborCount > 3) {
+            newGrid[i][j] = 0
+          }
+        } else {
+          if (neighborCount === 3) {
+            newGrid[i][j] = 1
           }
         }
       }
-      return newGrid
+    }
+    return newGrid
+  }
+
+  const updateGrid = (): void => {
+    setGrid((grid) => {
+      return tickGrid(grid)
     })
   }
 
