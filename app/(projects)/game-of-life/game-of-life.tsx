@@ -4,6 +4,7 @@ import SimpleGrid from '@/components/simple-grid'
 import { Button } from '@/components/ui/button'
 import { useEffect, useMemo, useState } from 'react'
 import { calculateGridDimensions, getCellSize, isInBounds } from '@/lib/simple-grid/utils'
+import { tickGrid } from './game-logic'
 
 const MIN_ROWS = 13
 const GAP_SIZE: number = 1
@@ -12,16 +13,6 @@ const colorMapping: { [key: number]: string } = {
   0: '#ccc', // dead
   1: '#3545b3', // alive
 }
-const directions = [
-  [0, 1],
-  [1, 0],
-  [0, -1],
-  [-1, 0],
-  [1, 1],
-  [1, -1],
-  [-1, 1],
-  [-1, -1],
-]
 
 const initialGrid = (numRows: number, numCols: number): number[][] => {
   const grid = new Array(numRows)
@@ -40,14 +31,14 @@ const initialGrid = (numRows: number, numCols: number): number[][] => {
 }
 
 const DESIRED_VIEW_WIDTH = window.innerWidth
-const DESIREF_VIEW_HEIGHT = window.innerHeight * 0.7
+const DESIRED_VIEW_HEIGHT = window.innerHeight * 0.7
 
 const GameOfLife: React.FC = () => {
   const cellSize = getCellSize(20, 30)
   const { numCols, numRows } = calculateGridDimensions(
     cellSize,
     DESIRED_VIEW_WIDTH,
-    DESIREF_VIEW_HEIGHT,
+    DESIRED_VIEW_HEIGHT,
     MIN_ROWS
   )
   const initialGridMemo = useMemo(() => initialGrid(numRows, numCols), [numRows, numCols])
@@ -55,40 +46,9 @@ const GameOfLife: React.FC = () => {
   const [intervalId, setIntervalId] = useState<NodeJS.Timeout | null>(null)
   const [isRunning, setIsRunning] = useState(false)
 
-  const getLiveNeighbors = (grid: number[][], x: number, y: number): number => {
-    let count = 0
-    for (const [dx, dy] of directions) {
-      const nX = x + dx
-      const nY = y + dy
-      if (isInBounds(nX, nY, numRows, numCols) && grid[nX][nY] === 1) {
-        count += 1
-      }
-    }
-    return count
-  }
-
-  const tickGrid = (grid: number[][]): number[][] => {
-    const newGrid = grid.map((row) => [...row])
-    for (let i = 0; i < numRows; i++) {
-      for (let j = 0; j < numCols; j++) {
-        const neighborCount = getLiveNeighbors(grid, i, j)
-        if (grid[i][j] === 1) {
-          if (neighborCount < 2 || neighborCount > 3) {
-            newGrid[i][j] = 0
-          }
-        } else {
-          if (neighborCount === 3) {
-            newGrid[i][j] = 1
-          }
-        }
-      }
-    }
-    return newGrid
-  }
-
   const updateGrid = (): void => {
     setGrid((grid) => {
-      return tickGrid(grid)
+      return tickGrid(grid, numRows, numCols)
     })
   }
 
