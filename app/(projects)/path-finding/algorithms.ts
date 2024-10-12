@@ -1,5 +1,5 @@
 import { isInBounds } from '@/lib/simple-grid/utils'
-import { Queue } from 'typescript-collections'
+import { PriorityQueue, Queue } from 'typescript-collections'
 import { COLORS } from './legend'
 
 interface IPathFindingAlgorithmProps {
@@ -41,7 +41,7 @@ export const runBFS: IPathFindingAlgorithm = ({ grid, colors, directions }) => {
         } else if (grid[nI][nJ] === colors.dest) {
           // backtrack to find the shortest path
           parents[coordsToKey(nI, nJ)] = [i, j]
-          return backtrackPath(grid, parents, source, dest)
+          return backtrackPath(grid, parents, dest)
         }
       }
     }
@@ -50,9 +50,6 @@ export const runBFS: IPathFindingAlgorithm = ({ grid, colors, directions }) => {
 }
 
 export const runDFS: IPathFindingAlgorithm = ({ grid, colors, directions }) => {
-  // TODO: fix this
-  console.log('DFS not implemented yet')
-  return grid
   const [source, dest] = locateSourceAndDest(grid, colors)
   clearPathRun(grid, colors)
 
@@ -60,50 +57,99 @@ export const runDFS: IPathFindingAlgorithm = ({ grid, colors, directions }) => {
     return grid
   }
 
-  const parents: { [key: string]: number[] } = {}
-
   const dfs = (i: number, j: number): boolean => {
-    if (grid[i][j] === colors.dest) return true
-
-    grid[i][j] = colors.explored
+    if (grid[i][j] !== colors.source) {
+      grid[i][j] = colors.explored
+    }
 
     for (const [dI, dJ] of directions) {
       const nI = i + dI
       const nJ = j + dJ
-      if (isInBounds(nI, nJ, grid.length, grid[0].length) && grid[nI][nJ] === colors.empty) {
-        const found = dfs(nI, nJ)
-        if (found) {
+      if (isInBounds(nI, nJ, grid.length, grid[0].length)) {
+        if (grid[nI][nJ] === colors.empty) {
+          const found = dfs(nI, nJ)
+          if (found) {
+            parents[coordsToKey(nI, nJ)] = [i, j]
+            return true
+          }
+        } else if (grid[nI][nJ] === colors.dest) {
           parents[coordsToKey(nI, nJ)] = [i, j]
+          return true
         }
-        return found
       }
     }
     return false
   }
 
+  const parents: { [key: string]: number[] } = {}
+
   if (dfs(source[0], source[1])) {
-    return backtrackPath(grid, parents, source, dest)
+    return backtrackPath(grid, parents, dest)
   }
   return grid
 }
 
 export const runAStar: IPathFindingAlgorithm = ({ grid, colors, directions }) => {
-  // Implement A* algorithm logic here
+  console.log('not implemented yet')
+  return grid
+  const [source, dest] = locateSourceAndDest(grid, colors)
+  clearPathRun(grid, colors)
+
+  const parents: { [key: string]: number[] } = {}
+  const openSet = new PriorityQueue<{ key: string; fScore: number }>((a, b) => a.fScore - b.fScore)
+  const gScore: { [key: string]: number } = {}
+  const fScore: { [key: string]: number } = {}
+
+  const sourceKey = coordsToKey(source[0], source[1])
+  const destKey = coordsToKey(dest[0], dest[1])
+
+  gScore[sourceKey] = 0
+  fScore[sourceKey] = manhattanDistance(source[0], source[1], dest)
+  openSet.enqueue({ key: sourceKey, fScore: fScore[sourceKey] })
+
+  while (!openSet.isEmpty()) {
+    const dequeued = openSet.dequeue()
+    if (!dequeued) {
+      break
+    }
+    const current = dequeued.key
+
+    if (current === destKey) {
+      return backtrackPath(grid, parents, dest)
+    }
+
+    const [currentI, currentJ] = keyToCoords(current)
+
+    for (const [dI, dJ] of directions) {
+      const nI = currentI + dI
+      const nJ = currentJ + dJ
+      if (!isInBounds(nI, nJ, grid.length, grid[0].length)) {
+        continue
+      }
+
+      const neighborKey = coordsToKey(nI, nJ)
+      const tentativeGScore = gScore[current] + 1
+
+      if (tentativeGScore < (gScore[neighborKey] || Infinity)) {
+        parents[neighborKey] = [currentI, currentJ]
+        gScore[neighborKey] = tentativeGScore
+        fScore[neighborKey] = gScore[neighborKey] + manhattanDistance(nI, nJ, dest)
+        openSet.enqueue({ key: neighborKey, fScore: fScore[neighborKey] })
+      }
+    }
+  }
   return grid
 }
 
 const backtrackPath = (
   grid: number[][],
   parents: { [key: string]: number[] },
-  source: number[],
   dest: number[]
 ): number[][] => {
   let curr = parents[coordsToKey(dest[0], dest[1])]
-  while (curr[0] !== source[0] || curr[1] !== source[1]) {
+  while (grid[curr[0]][curr[1]] !== COLORS.source) {
     const [i, j] = curr
-    if (grid[i][j] !== COLORS.source) {
-      grid[i][j] = COLORS.path
-    }
+    grid[i][j] = COLORS.path
     curr = parents[coordsToKey(i, j)]
   }
   return grid
@@ -134,4 +180,9 @@ const clearPathRun = (grid: number[][], colors: typeof COLORS) => {
   }
 }
 
+// heuristic function for AStar
+const manhattanDistance = (i: number, j: number, dest: number[]): number => {
+  return Math.abs(i - dest[0]) + Math.abs(j - dest[1])
+}
 const coordsToKey = (i: number, j: number): string => `${i}-${j}`
+const keyToCoords = (key: string): number[] => key.split('-').map(Number)

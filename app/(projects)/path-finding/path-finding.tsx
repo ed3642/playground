@@ -58,11 +58,12 @@ const createInitialGrid = (numRows: number, numCols: number): number[][] => {
   // initial pattern
   const halfCol = Math.floor(numCols / 2)
   const colShift = Math.floor(numCols / 4)
-  grid[9][halfCol - 2] = COLORS.source
-  grid[8][halfCol] = COLORS.wall
-  grid[9][halfCol] = COLORS.wall
-  grid[10][halfCol] = COLORS.wall
-  grid[9][halfCol + colShift] = COLORS.dest
+  const midRow = Math.floor(numRows / 2)
+  grid[midRow - 1][halfCol - 2] = COLORS.source
+  grid[midRow - 2][halfCol] = COLORS.wall
+  grid[midRow - 1][halfCol] = COLORS.wall
+  grid[midRow][halfCol] = COLORS.wall
+  grid[midRow - 1][halfCol + colShift] = COLORS.dest
   return algorithms.runBFS({ grid, colors: COLORS, directions: baseDirections })
 }
 
@@ -70,7 +71,7 @@ const DESIRED_VIEW_WIDTH = window.innerWidth
 const DESIRED_VIEW_HEIGHT = window.innerHeight * 0.75
 
 const PathFinding: React.FC = () => {
-  const cellSize = getCellSize(25, 35)
+  const cellSize = getCellSize(30, 45)
   const { numRows, numCols } = calculateGridDimensions(
     cellSize,
     DESIRED_VIEW_WIDTH,
@@ -133,6 +134,7 @@ const PathFinding: React.FC = () => {
   const handleReset = (): void => {
     setGrid(createInitialGrid(numRows, numCols))
     setAllowDiagonals(false)
+    setAlgorithm(Algorithm.BFS)
   }
 
   return (
@@ -169,7 +171,7 @@ const PathFinding: React.FC = () => {
           </HoverCardTrigger>
           <HoverCardContent>
             <p>
-              You can drag and drop the source and destination nodes. Also click to remove nodes.
+              You can drag and drop the source and destination nodes. Also click to toggle nodes.
             </p>
           </HoverCardContent>
         </HoverCard>

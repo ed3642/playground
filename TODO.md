@@ -14,12 +14,12 @@
 [x] add interactivity to down arrow in landing page
 [x] make simpleGrid look nicer
 [x] add algo explanation to path finder
-[ ] get all the other algos working
-
-[ ] add mobile support to path finder
+[ ] get all the other base algos working
 [ ] add preset maps to path finder
-[ ] djikstras showcase
+
 [ ] type speed tracker based on 1984
 [ ] recursion showcase
 [ ] shared checkboxs game
 [ ] chat
+
+[ ] maybe add weights to the grid and implement Dijkstra and SPFA
