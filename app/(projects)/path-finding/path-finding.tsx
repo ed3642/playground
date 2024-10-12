@@ -86,9 +86,22 @@ const PathFinding: React.FC = () => {
     null
   )
 
+  const runCurrentAlgorithm = (allowDiagonals: boolean): void => {
+    const runAlgorithm = algorithmFuncMap[algorithm]
+    if (runAlgorithm) {
+      runAlgorithm({
+        grid,
+        colors: COLORS,
+        directions: allowDiagonals ? diagonalDirections : baseDirections,
+      })
+      const newGrid = grid.map((row) => [...row])
+      setGrid(newGrid)
+    }
+  }
+
   useEffect(() => {
     runCurrentAlgorithm(allowDiagonals)
-  }, [allowDiagonals, algorithm])
+  }, [allowDiagonals, algorithm, runCurrentAlgorithm])
 
   const toggleCell = (i: number, j: number): void => {
     if (
@@ -115,19 +128,6 @@ const PathFinding: React.FC = () => {
       grid[i][j] = draggedCell.type
       runCurrentAlgorithm(allowDiagonals)
       setDraggedCell(null)
-    }
-  }
-
-  const runCurrentAlgorithm = (allowDiagonals: boolean): void => {
-    const runAlgorithm = algorithmFuncMap[algorithm]
-    if (runAlgorithm) {
-      runAlgorithm({
-        grid,
-        colors: COLORS,
-        directions: allowDiagonals ? diagonalDirections : baseDirections,
-      })
-      const newGrid = grid.map((row) => [...row])
-      setGrid(newGrid)
     }
   }
 
