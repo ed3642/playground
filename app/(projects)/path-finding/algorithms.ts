@@ -90,55 +90,61 @@ export const runDFS: IPathFindingAlgorithm = ({ grid, colors, directions }) => {
 }
 
 export const runAStar: IPathFindingAlgorithm = ({ grid, colors, directions }) => {
-  console.log('not implemented yet')
-  return grid
-  // const [source, dest] = locateSourceAndDest(grid, colors)
-  // clearPathRun(grid, colors)
+  const [source, dest] = locateSourceAndDest(grid, colors)
+  clearPathRun(grid, colors)
 
-  // const parents: { [key: string]: number[] } = {}
-  // const openSet = new PriorityQueue<{ key: string; fScore: number }>((a, b) => a.fScore - b.fScore)
-  // const gScore: { [key: string]: number } = {}
-  // const fScore: { [key: string]: number } = {}
+  if (source.length === 0 || dest.length === 0) {
+    return grid
+  }
 
-  // const sourceKey = coordsToKey(source[0], source[1])
-  // const destKey = coordsToKey(dest[0], dest[1])
+  const parents: { [key: string]: number[] } = {}
+  const pq = new PriorityQueue<{ key: string; fScore: number }>((a, b) => b.fScore - a.fScore) // max heap
+  const gScore: { [key: string]: number } = {}
+  const fScore: { [key: string]: number } = {}
 
-  // gScore[sourceKey] = 0
-  // fScore[sourceKey] = manhattanDistance(source[0], source[1], dest)
-  // openSet.enqueue({ key: sourceKey, fScore: fScore[sourceKey] })
+  const sourceKey = coordsToKey(source[0], source[1])
+  const destKey = coordsToKey(dest[0], dest[1])
 
-  // while (!openSet.isEmpty()) {
-  //   const dequeued = openSet.dequeue()
-  //   if (!dequeued) {
-  //     break
-  //   }
-  //   const current = dequeued.key
+  gScore[sourceKey] = 0
+  fScore[sourceKey] = manhattanDistance(source[0], source[1], dest)
+  pq.enqueue({ key: sourceKey, fScore: fScore[sourceKey] })
 
-  //   if (current === destKey) {
-  //     return backtrackPath(grid, parents, dest)
-  //   }
+  while (!pq.isEmpty()) {
+    const node = pq.dequeue()
+    if (!node) {
+      break
+    }
+    const current = node.key
 
-  //   const [currentI, currentJ] = keyToCoords(current)
+    if (current === destKey) {
+      return backtrackPath(grid, parents, dest)
+    }
 
-  //   for (const [dI, dJ] of directions) {
-  //     const nI = currentI + dI
-  //     const nJ = currentJ + dJ
-  //     if (!isInBounds(nI, nJ, grid.length, grid[0].length)) {
-  //       continue
-  //     }
+    const [currentI, currentJ] = keyToCoords(current)
 
-  //     const neighborKey = coordsToKey(nI, nJ)
-  //     const tentativeGScore = gScore[current] + 1
+    for (const [dI, dJ] of directions) {
+      const nI = currentI + dI
+      const nJ = currentJ + dJ
+      if (!isInBounds(nI, nJ, grid.length, grid[0].length) || grid[nI][nJ] === colors.wall) {
+        continue
+      }
 
-  //     if (tentativeGScore < (gScore[neighborKey] || Infinity)) {
-  //       parents[neighborKey] = [currentI, currentJ]
-  //       gScore[neighborKey] = tentativeGScore
-  //       fScore[neighborKey] = gScore[neighborKey] + manhattanDistance(nI, nJ, dest)
-  //       openSet.enqueue({ key: neighborKey, fScore: fScore[neighborKey] })
-  //     }
-  //   }
-  // }
-  // return grid
+      const neighborKey = coordsToKey(nI, nJ)
+      const tentativeGScore = gScore[current] + 1
+
+      if (tentativeGScore < (gScore[neighborKey] || Infinity)) {
+        parents[neighborKey] = [currentI, currentJ]
+        gScore[neighborKey] = tentativeGScore
+        fScore[neighborKey] = gScore[neighborKey] + manhattanDistance(nI, nJ, dest)
+        pq.enqueue({ key: neighborKey, fScore: fScore[neighborKey] })
+
+        if (grid[nI][nJ] !== colors.source && grid[nI][nJ] !== colors.dest) {
+          grid[nI][nJ] = colors.explored
+        }
+      }
+    }
+  }
+  return grid // no path found
 }
 
 const backtrackPath = (
