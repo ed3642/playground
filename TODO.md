@@ -14,7 +14,7 @@
 [x] add interactivity to down arrow in landing page
 [x] make simpleGrid look nicer
 [x] add algo explanation to path finder
-[ ] get all the other base algos working
+[x] get all the other base algos working
 [ ] add preset maps to path finder
 
 [ ] type speed tracker based on 1984

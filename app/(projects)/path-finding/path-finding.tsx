@@ -11,11 +11,12 @@ import {
 import { Button } from '@/components/ui/button'
 import { ChevronDown, CircleHelp } from 'lucide-react'
 import { calculateGridDimensions, getCellSize, isInBounds } from '@/lib/simple-grid/utils'
-import * as algorithms from './algorithms'
 import { Switch } from '@/components/ui/switch'
 import { Label } from '@/components/ui/label'
-import { colorMapping, COLORS } from './legend'
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card'
+
+import { colorMapping, COLORS } from './legend'
+import * as algorithms from './algorithms'
 
 const GAP_SIZE: number = 1
 
@@ -115,6 +116,11 @@ const PathFinding: React.FC = () => {
     runCurrentAlgorithm(allowDiagonals)
   }
 
+  const handleGenerateMaze = () => {
+    const newGrid = algorithms.generateMaze(grid, COLORS)
+    setGrid(newGrid)
+  }
+
   const handleDragStart = (i: number, j: number) => {
     if (grid[i][j] === COLORS.source || grid[i][j] === COLORS.dest) {
       setDraggedCell({ type: grid[i][j], i, j })
@@ -142,7 +148,7 @@ const PathFinding: React.FC = () => {
       <div className="flex flex-col items-center my-2 space-y-2 sm:flex-row sm:space-x-2 sm:space-y-0">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="secondary">
+            <Button>
               Algo: {algorithm} <ChevronDown className="ml-2" />
             </Button>
           </DropdownMenuTrigger>
@@ -162,6 +168,9 @@ const PathFinding: React.FC = () => {
           />
           <Label htmlFor="allow-diagonals-switch">Allow Diagonals</Label>
         </div>
+        <Button variant="secondary" onClick={handleGenerateMaze}>
+          Generate Maze
+        </Button>
         <Button variant="destructive" onClick={handleReset}>
           Reset
         </Button>
