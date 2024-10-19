@@ -15,11 +15,12 @@
 [x] make simpleGrid look nicer
 [x] add algo explanation to path finder
 [x] get all the other base algos working
-[ ] add preset maps to path finder
+[x] add preset maps to path finder
 
 [ ] type speed tracker based on 1984
 [ ] recursion showcase
 [ ] shared checkboxs game
 [ ] chat
+[ ] community checklist (feed Mina)
 
 [ ] maybe add weights to the grid and implement Dijkstra and SPFA

@@ -2,33 +2,30 @@ import { isInBounds } from '@/lib/simple-grid/utils'
 import { PriorityQueue, Queue } from 'typescript-collections'
 import { COLORS } from './legend'
 
-interface IPathFindingAlgorithmProps {
-  grid: number[][]
-  colors: typeof COLORS
-  directions: number[][]
-}
-
 interface IPathFindingAlgorithm {
-  (props: IPathFindingAlgorithmProps): number[][]
+  (props: { grid: number[][]; colors: typeof COLORS; directions: number[][] }): {
+    pathLength: number
+    cellsChecked: number
+  }
 }
 
 export const runBFS: IPathFindingAlgorithm = ({ grid, colors, directions }) => {
-  // locate source and destination
   const [source, dest] = locateSourceAndDest(grid, colors)
   clearPathRun(grid, colors)
 
   if (source.length === 0 || dest.length === 0) {
-    // didn't find the needed nodes
-    return grid
+    return { pathLength: 0, cellsChecked: 0 }
   }
 
   const queue = new Queue<number[]>() // [i, j]
   const parents: { [key: string]: number[] } = {}
+  let cellsChecked = 0
 
   queue.enqueue(source)
 
   while (!queue.isEmpty()) {
     const [i, j] = queue.dequeue() as number[]
+    cellsChecked++
 
     for (const [di, dj] of directions) {
       const nI = i + di
@@ -39,14 +36,14 @@ export const runBFS: IPathFindingAlgorithm = ({ grid, colors, directions }) => {
           queue.enqueue([nI, nJ])
           parents[coordsToKey(nI, nJ)] = [i, j]
         } else if (grid[nI][nJ] === colors.dest) {
-          // backtrack to find the shortest path
           parents[coordsToKey(nI, nJ)] = [i, j]
-          return backtrackPath(grid, parents, dest)
+          const pathLength = backtrackPath(grid, parents, dest)
+          return { pathLength, cellsChecked }
         }
       }
     }
   }
-  return grid
+  return { pathLength: 0, cellsChecked }
 }
 
 export const runDFS: IPathFindingAlgorithm = ({ grid, colors, directions }) => {
@@ -54,13 +51,17 @@ export const runDFS: IPathFindingAlgorithm = ({ grid, colors, directions }) => {
   clearPathRun(grid, colors)
 
   if (source.length === 0 || dest.length === 0) {
-    return grid
+    return { pathLength: 0, cellsChecked: 0 }
   }
+
+  const parents: { [key: string]: number[] } = {}
+  let cellsChecked = 0
 
   const dfs = (i: number, j: number): boolean => {
     if (grid[i][j] !== colors.source) {
       grid[i][j] = colors.explored
     }
+    cellsChecked++
 
     for (const [dI, dJ] of directions) {
       const nI = i + dI
@@ -81,12 +82,11 @@ export const runDFS: IPathFindingAlgorithm = ({ grid, colors, directions }) => {
     return false
   }
 
-  const parents: { [key: string]: number[] } = {}
-
   if (dfs(source[0], source[1])) {
-    return backtrackPath(grid, parents, dest)
+    const pathLength = backtrackPath(grid, parents, dest)
+    return { pathLength, cellsChecked }
   }
-  return grid
+  return { pathLength: 0, cellsChecked }
 }
 
 export const runAStar: IPathFindingAlgorithm = ({ grid, colors, directions }) => {
@@ -94,13 +94,14 @@ export const runAStar: IPathFindingAlgorithm = ({ grid, colors, directions }) =>
   clearPathRun(grid, colors)
 
   if (source.length === 0 || dest.length === 0) {
-    return grid
+    return { pathLength: 0, cellsChecked: 0 }
   }
 
   const parents: { [key: string]: number[] } = {}
-  const pq = new PriorityQueue<{ key: string; fScore: number }>((a, b) => b.fScore - a.fScore) // max heap
+  const pq = new PriorityQueue<{ key: string; fScore: number }>((a, b) => b.fScore - a.fScore) // min heap
   const gScore: { [key: string]: number } = {}
   const fScore: { [key: string]: number } = {}
+  let cellsChecked = 0
 
   const sourceKey = coordsToKey(source[0], source[1])
   const destKey = coordsToKey(dest[0], dest[1])
@@ -115,9 +116,11 @@ export const runAStar: IPathFindingAlgorithm = ({ grid, colors, directions }) =>
       break
     }
     const current = node.key
+    cellsChecked++
 
     if (current === destKey) {
-      return backtrackPath(grid, parents, dest)
+      const pathLength = backtrackPath(grid, parents, dest)
+      return { pathLength, cellsChecked }
     }
 
     const [currentI, currentJ] = keyToCoords(current)
@@ -144,39 +147,45 @@ export const runAStar: IPathFindingAlgorithm = ({ grid, colors, directions }) =>
       }
     }
   }
-  return grid // no path found
+  return { pathLength: 0, cellsChecked }
 }
 
-// Original JavaScript code by Chirp Internet: www.chirpinternet.eu
 class MazeBuilder {
   width: number
   height: number
   cols: number
   rows: number
-  maze: number[][]
+  grid: number[][]
 
-  constructor(width: number, height: number, colors: typeof COLORS) {
-    this.width = width
-    this.height = height
+  constructor(grid: number[][], colors: typeof COLORS) {
+    this.grid = grid
+    this.height = Math.floor((grid.length - 1) / 2)
+    this.width = Math.floor((grid[0].length - 1) / 2)
     this.cols = 2 * this.width + 1
     this.rows = 2 * this.height + 1
-    this.maze = this.initArray(colors.empty)
+
+    // Initialize the grid with empty cells
+    for (let i = 0; i < this.rows; i++) {
+      for (let j = 0; j < this.cols; j++) {
+        this.grid[i][j] = colors.empty
+      }
+    }
 
     // Place initial walls
-    this.maze.forEach((row, r) => {
+    this.grid.forEach((row, r) => {
       row.forEach((cell, c) => {
         switch (r) {
           case 0:
           case this.rows - 1:
-            this.maze[r][c] = colors.wall
+            this.grid[r][c] = colors.wall
             break
           default:
             if (r % 2 === 1) {
               if (c === 0 || c === this.cols - 1) {
-                this.maze[r][c] = colors.wall
+                this.grid[r][c] = colors.wall
               }
             } else if (c % 2 === 0) {
-              this.maze[r][c] = colors.wall
+              this.grid[r][c] = colors.wall
             }
         }
       })
@@ -184,22 +193,18 @@ class MazeBuilder {
       if (r === 0) {
         // Place exit in top row
         const doorPos = this.posToSpace(this.rand(1, this.width))
-        this.maze[r][doorPos] = colors.dest
+        this.grid[r][doorPos] = colors.dest
       }
 
       if (r === this.rows - 1) {
         // Place entrance in bottom row
         const doorPos = this.posToSpace(this.rand(1, this.width))
-        this.maze[r][doorPos] = colors.source
+        this.grid[r][doorPos] = colors.source
       }
     })
 
     // Start partitioning
     this.partition(1, this.height - 1, 1, this.width - 1, colors)
-  }
-
-  initArray(value: number): number[][] {
-    return new Array(this.rows).fill(null).map(() => new Array(this.cols).fill(value))
   }
 
   rand(min: number, max: number): number {
@@ -254,7 +259,7 @@ class MazeBuilder {
     for (let i = this.posToWall(r1) - 1; i <= this.posToWall(r2) + 1; i++) {
       for (let j = this.posToWall(c1) - 1; j <= this.posToWall(c2) + 1; j++) {
         if (i === this.posToWall(horiz) || j === this.posToWall(vert)) {
-          this.maze[i][j] = colors.wall
+          this.grid[i][j] = colors.wall
         }
       }
     }
@@ -264,22 +269,22 @@ class MazeBuilder {
     // Create gaps in partition walls
     if (gaps[0]) {
       const gapPosition = this.rand(c1, vert)
-      this.maze[this.posToWall(horiz)][this.posToSpace(gapPosition)] = colors.empty
+      this.grid[this.posToWall(horiz)][this.posToSpace(gapPosition)] = colors.empty
     }
 
     if (gaps[1]) {
       const gapPosition = this.rand(vert + 1, c2 + 1)
-      this.maze[this.posToWall(horiz)][this.posToSpace(gapPosition)] = colors.empty
+      this.grid[this.posToWall(horiz)][this.posToSpace(gapPosition)] = colors.empty
     }
 
     if (gaps[2]) {
       const gapPosition = this.rand(r1, horiz)
-      this.maze[this.posToSpace(gapPosition)][this.posToWall(vert)] = colors.empty
+      this.grid[this.posToSpace(gapPosition)][this.posToWall(vert)] = colors.empty
     }
 
     if (gaps[3]) {
       const gapPosition = this.rand(horiz + 1, r2 + 1)
-      this.maze[this.posToSpace(gapPosition)][this.posToWall(vert)] = colors.empty
+      this.grid[this.posToSpace(gapPosition)][this.posToWall(vert)] = colors.empty
     }
 
     // Recursively partition newly created chambers
@@ -290,29 +295,24 @@ class MazeBuilder {
   }
 }
 
-export const generateMaze = (grid: number[][], colors: typeof COLORS): number[][] => {
-  const rows = grid.length
-  const cols = grid[0].length
-  const width = Math.floor((cols - 1) / 2)
-  const height = Math.floor((rows - 1) / 2)
-
-  const mazeBuilder = new MazeBuilder(width, height, colors)
-  console.log(mazeBuilder.maze)
-  return mazeBuilder.maze
+export const generateMaze = (grid: number[][], colors: typeof COLORS): void => {
+  new MazeBuilder(grid, colors)
 }
 
 const backtrackPath = (
   grid: number[][],
   parents: { [key: string]: number[] },
   dest: number[]
-): number[][] => {
+): number => {
   let curr = parents[coordsToKey(dest[0], dest[1])]
+  let pathLength = 0
   while (grid[curr[0]][curr[1]] !== COLORS.source) {
     const [i, j] = curr
     grid[i][j] = COLORS.path
     curr = parents[coordsToKey(i, j)]
+    pathLength++
   }
-  return grid
+  return pathLength
 }
 
 const locateSourceAndDest = (grid: number[][], colors: typeof COLORS): [number[], number[]] => {
@@ -344,5 +344,6 @@ const clearPathRun = (grid: number[][], colors: typeof COLORS) => {
 const manhattanDistance = (i: number, j: number, dest: number[]): number => {
   return Math.abs(i - dest[0]) + Math.abs(j - dest[1])
 }
+
 const coordsToKey = (i: number, j: number): string => `${i}-${j}`
 const keyToCoords = (key: string): number[] => key.split('-').map(Number)

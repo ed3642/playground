@@ -65,7 +65,8 @@ const createInitialGrid = (numRows: number, numCols: number): number[][] => {
   grid[midRow - 1][halfCol] = COLORS.wall
   grid[midRow][halfCol] = COLORS.wall
   grid[midRow - 1][halfCol + colShift] = COLORS.dest
-  return algorithms.runBFS({ grid, colors: COLORS, directions: baseDirections })
+  algorithms.runBFS({ grid, colors: COLORS, directions: baseDirections })
+  return grid
 }
 
 const DESIRED_VIEW_WIDTH = window.innerWidth
@@ -81,6 +82,8 @@ const PathFinding: React.FC = () => {
 
   const initialGrid = useMemo(() => createInitialGrid(numRows, numCols), [numRows, numCols])
   const [grid, setGrid] = useState(initialGrid)
+  const [pathLength, setPathLength] = useState(0)
+  const [cellsChecked, setCellsChecked] = useState(0)
   const [algorithm, setAlgorithm] = useState<Algorithm>(Algorithm.BFS)
   const [allowDiagonals, setAllowDiagonals] = useState(false)
   const [draggedCell, setDraggedCell] = useState<{ type: COLORS; i: number; j: number } | null>(
@@ -94,11 +97,13 @@ const PathFinding: React.FC = () => {
   const runCurrentAlgorithm = (allowDiagonals: boolean): void => {
     const runAlgorithm = algorithmFuncMap[algorithm]
     if (runAlgorithm) {
-      runAlgorithm({
+      const { pathLength, cellsChecked } = runAlgorithm({
         grid,
         colors: COLORS,
         directions: allowDiagonals ? diagonalDirections : baseDirections,
       })
+      setPathLength(pathLength)
+      setCellsChecked(cellsChecked)
       const newGrid = grid.map((row) => [...row])
       setGrid(newGrid)
     }
@@ -117,7 +122,9 @@ const PathFinding: React.FC = () => {
   }
 
   const handleGenerateMaze = () => {
-    const newGrid = algorithms.generateMaze(grid, COLORS)
+    algorithms.generateMaze(grid, COLORS)
+    runCurrentAlgorithm(allowDiagonals)
+    const newGrid = grid.map((row) => [...row])
     setGrid(newGrid)
   }
 
@@ -184,6 +191,10 @@ const PathFinding: React.FC = () => {
             </p>
           </HoverCardContent>
         </HoverCard>
+      </div>
+      <div className="flex items-center space-x-2 mb-2">
+        <Label>Path Length: {pathLength}</Label> &nbsp;&nbsp;|
+        <Label>Cells Checked: {cellsChecked}</Label>
       </div>
       <div className="mb-4">
         <SimpleGrid
