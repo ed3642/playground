@@ -34,7 +34,7 @@ const DESIRED_VIEW_WIDTH = window.innerWidth
 const DESIRED_VIEW_HEIGHT = window.innerHeight * 0.7
 
 const GameOfLife: React.FC = () => {
-  const cellSize = getCellSize(20, 30)
+  const cellSize = getCellSize({ defaultSize: 20, phoneSize: 30 })
   const { numCols, numRows } = calculateGridDimensions(
     cellSize,
     DESIRED_VIEW_WIDTH,

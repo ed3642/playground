@@ -28,13 +28,13 @@ const baseDirections = [
 ]
 const diagonalDirections = [
   [0, 1],
-  [1, 0],
-  [0, -1],
-  [-1, 0],
   [1, 1],
+  [1, 0],
   [1, -1],
-  [-1, 1],
+  [0, -1],
   [-1, -1],
+  [-1, 0],
+  [-1, 1],
 ]
 
 enum Algorithm {
@@ -73,7 +73,7 @@ const DESIRED_VIEW_WIDTH = window.innerWidth
 const DESIRED_VIEW_HEIGHT = window.innerHeight * 0.75
 
 const PathFinding: React.FC = () => {
-  const cellSize = getCellSize(30, 45)
+  const cellSize = getCellSize({ defaultSize: 30, phoneSize: 45 })
   const { numRows, numCols } = calculateGridDimensions(
     cellSize,
     DESIRED_VIEW_WIDTH,
@@ -116,7 +116,7 @@ const PathFinding: React.FC = () => {
       grid[i][j] == COLORS.dest
     )
       return
-    // run this with the current grid so we dont have to make a copy just for updating one cell
+    // dont setGrid here, so we dont have to make a copy just for updating one cell
     grid[i][j] = grid[i][j] === COLORS.wall ? COLORS.empty : COLORS.wall
     runCurrentAlgorithm(allowDiagonals)
   }
@@ -193,7 +193,7 @@ const PathFinding: React.FC = () => {
         </HoverCard>
       </div>
       <div className="flex items-center space-x-2 mb-2">
-        <Label>Path Length: {pathLength}</Label> &nbsp;&nbsp;|
+        <Label>Path Length: {pathLength}</Label> &nbsp;&nbsp;|&nbsp;&nbsp;
         <Label>Cells Checked: {cellsChecked}</Label>
       </div>
       <div className="mb-4">
@@ -204,10 +204,9 @@ const PathFinding: React.FC = () => {
           gap={GAP_SIZE}
           colors={colorMapping}
           onDragStart={handleDragStart}
-          onDragOver={(e) => {
-            e.preventDefault()
-          }}
           onDrop={handleDrop}
+          onTouchStart={handleDragStart}
+          onTouchEnd={handleDrop}
           draggableValues={[COLORS.source, COLORS.dest]}
           cellClassName="rounded-full"
         />

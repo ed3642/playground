@@ -10,7 +10,13 @@ export const calculateGridDimensions = (
   return { numCols, numRows }
 }
 
-export const getCellSize = (defaultSize: number, phoneSize: number): number => {
+export const getCellSize = ({
+  defaultSize,
+  phoneSize,
+}: {
+  defaultSize: number
+  phoneSize: number
+}): number => {
   const viewportWidth: number = window.innerWidth
   return viewportWidth < 768 ? phoneSize : defaultSize // use bigger cells on phone
 }
