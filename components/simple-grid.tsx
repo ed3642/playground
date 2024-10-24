@@ -1,3 +1,4 @@
+import { COLORS } from '@/app/(projects)/path-finding/legend'
 import { cn } from '@/lib/utils'
 import React, { useState } from 'react'
 
@@ -9,10 +10,11 @@ interface SimpleGridProps {
   colors: { [key: number]: string }
   draggableValues?: number[]
   onDragStart?: (rowIndex: number, colIndex: number) => void
+  onDragOver?: (e: React.DragEvent) => void
   onDrop?: (rowIndex: number, colIndex: number) => void
   cellClassName?: string
   onTouchStart?: (rowIndex: number, colIndex: number) => void
-  onTouchEnd?: (rowIndex: number, colIndex: number) => void
+  draggedCell?: { type: COLORS; i: number; j: number } | null
 }
 
 const SimpleGrid: React.FC<SimpleGridProps> = ({
@@ -23,23 +25,12 @@ const SimpleGrid: React.FC<SimpleGridProps> = ({
   colors,
   draggableValues,
   onDragStart,
+  onDragOver,
   onDrop,
   cellClassName,
   onTouchStart,
-  onTouchEnd,
+  draggedCell,
 }) => {
-  const [dampenedCells, setDampenedCells] = useState<{ [key: string]: boolean }>({})
-
-  const handleTouchStart = (rowIndex: number, colIndex: number) => {
-    setDampenedCells((prev) => ({ ...prev, [`${rowIndex}-${colIndex}`]: true }))
-    if (onTouchStart) onTouchStart(rowIndex, colIndex)
-  }
-
-  const handleTouchEnd = (rowIndex: number, colIndex: number) => {
-    setDampenedCells((prev) => ({ ...prev, [`${rowIndex}-${colIndex}`]: false }))
-    if (onTouchEnd) onTouchEnd(rowIndex, colIndex)
-  }
-
   const gridTemplateColumns = `repeat(${grid[0].length}, ${cellSize}px)`
   const gridTemplateRows = `repeat(${grid.length}, ${cellSize}px)`
 
@@ -67,15 +58,15 @@ const SimpleGrid: React.FC<SimpleGridProps> = ({
                   onClick={() => toggleCell(i, j)}
                   draggable={draggableValues?.includes(value)}
                   onDragStart={onDragStart ? () => onDragStart(i, j) : undefined}
+                  onDragOver={onDragOver ? (e) => onDragOver(e) : undefined}
                   onDrop={onDrop ? () => onDrop(i, j) : undefined}
-                  onTouchStart={() => handleTouchStart(i, j)}
-                  onTouchEnd={() => handleTouchEnd(i, j)}
+                  onTouchStart={onTouchStart ? () => onTouchStart(i, j) : undefined}
                 >
                   <div
                     className={cn(
                       'w-full h-full flex justify-center items-center',
                       cellClassName,
-                      dampenedCells[`${i}-${j}`] ? 'brightness-50' : ''
+                      draggedCell?.i === i && draggedCell?.j === j ? 'brightness-50' : ''
                     )}
                     style={{
                       backgroundColor: colors[value] || colors[0], // default to first color

@@ -144,6 +144,14 @@ const PathFinding: React.FC = () => {
     }
   }
 
+  const handleTouchStart = (i: number, j: number) => {
+    if (draggedCell) {
+      handleDrop(i, j)
+    } else {
+      handleDragStart(i, j)
+    }
+  }
+
   const handleReset = (): void => {
     setGrid(createInitialGrid(numRows, numCols))
     setAllowDiagonals(false)
@@ -204,11 +212,12 @@ const PathFinding: React.FC = () => {
           gap={GAP_SIZE}
           colors={colorMapping}
           onDragStart={handleDragStart}
+          onDragOver={(e) => e.preventDefault()}
           onDrop={handleDrop}
-          onTouchStart={handleDragStart}
-          onTouchEnd={handleDrop}
+          onTouchStart={handleTouchStart}
           draggableValues={[COLORS.source, COLORS.dest]}
           cellClassName="rounded-full"
+          draggedCell={draggedCell}
         />
       </div>
     </div>
