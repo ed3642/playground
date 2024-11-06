@@ -107,7 +107,7 @@ export const runAStar: IPathFindingAlgorithm = ({ grid, colors, directions }) =>
   const destKey = coordsToKey(dest[0], dest[1])
 
   gScore[sourceKey] = 0
-  fScore[sourceKey] = manhattanDistance(source[0], source[1], dest)
+  fScore[sourceKey] = heuristic(source[0], source[1], dest)
   pq.enqueue({ key: sourceKey, fScore: fScore[sourceKey] })
 
   while (!pq.isEmpty()) {
@@ -138,7 +138,7 @@ export const runAStar: IPathFindingAlgorithm = ({ grid, colors, directions }) =>
       if (tentativeGScore < (gScore[neighborKey] || Infinity)) {
         parents[neighborKey] = [currentI, currentJ]
         gScore[neighborKey] = tentativeGScore
-        fScore[neighborKey] = gScore[neighborKey] + manhattanDistance(nI, nJ, dest)
+        fScore[neighborKey] = gScore[neighborKey] + heuristic(nI, nJ, dest)
         pq.enqueue({ key: neighborKey, fScore: fScore[neighborKey] })
 
         if (grid[nI][nJ] !== colors.source && grid[nI][nJ] !== colors.dest) {
@@ -340,9 +340,9 @@ const clearPathRun = (grid: number[][], colors: typeof COLORS) => {
   }
 }
 
-// heuristic function for AStar
-const manhattanDistance = (i: number, j: number, dest: number[]): number => {
-  return Math.abs(i - dest[0]) + Math.abs(j - dest[1])
+// heuristic function for AStar, cherbyshev
+const heuristic = (i: number, j: number, dest: number[]): number => {
+  return Math.max(Math.abs(i - dest[0]), Math.abs(j - dest[1]))
 }
 
 const coordsToKey = (i: number, j: number): string => `${i}-${j}`

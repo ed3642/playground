@@ -16,11 +16,11 @@
 [x] add algo explanation to path finder
 [x] get all the other base algos working
 [x] add preset maps to path finder
-[ ] path finder mobile support
+[x] path finder mobile support
 
+[ ] shared checkboxs game (purple or green)
 [ ] type speed tracker based on 1984
 [ ] recursion showcase
-[ ] shared checkboxs game
 [ ] chat
 [ ] community checklist (feed Mina)
 
